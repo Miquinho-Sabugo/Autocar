@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <title>AutoCar | Painel de Gerenciamento</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .input-field {
+      @apply w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all;
+    }
+    .toast { animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between shadow-xl border-b border-slate-700">
+    <div class="flex items-center gap-3">
+      <img src="favicon.svg" alt="" class="w-9 h-9 rounded-lg flex-shrink-0">
+      <div>
+        <span class="font-black text-lg tracking-tight">AUTO<span class="text-blue-400">CAR</span></span>
+        <span class="block text-[10px] text-slate-400 uppercase tracking-widest">Painel Administrativo</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="admin-user-info" class="hidden text-xs text-slate-300 font-medium">
+        Logado como: <strong class="text-white" id="admin-user-name">Admin</strong>
+      </span>
+      <span id="status-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+        <span class="w-1.5 h-1.5 rounded-full bg-slate-500 mr-1.5"></span> Verificando...
+      </span>
+      <a href="/" class="text-xs px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors">← Ver Loja</a>
+    </div>
+  </header>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+  <nav class="max-w-7xl mx-auto px-4 pt-6 flex flex-wrap gap-2" aria-label="Seções administrativas">
+    <button type="button" onclick="setAdminPage('inventory')" id="nav-inventory" class="rounded-lg px-4 py-2 text-sm font-bold bg-blue-600 text-white">Estoque e cadastro</button>
+    <button type="button" onclick="setAdminPage('carousel')" id="nav-carousel" class="rounded-lg px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50">Carrossel da loja</button>
+  </nav>
+
+  <!-- Main Layout -->
+  <div id="inventory-page" class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 xl:grid-cols-3 gap-8">
+
+    <!-- COLUNA 1: Formulário de Cadastro -->
+    <div class="xl:col-span-1">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden sticky top-6 max-h-[calc(100vh-3rem)] flex flex-col">
+        <div class="p-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <h2 class="font-extrabold text-base flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            <span id="form-title">Cadastrar Novo Veículo</span>
+          </h2>
+          <p id="form-description" class="text-xs text-blue-200 mt-0.5">Preencha os dados e clique em Salvar</p>
+        </div>
+
+        <form id="car-form" onsubmit="submitCar(event)" class="p-5 space-y-3 text-xs overflow-y-auto min-h-0">
+          
+          <!-- Título -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Título / Nome do Veículo *</label>
+            <input type="text" id="f-titulo" placeholder="Ex: Toyota Corolla XEi 2.0 Flex" required
+              class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+          </div>
+
+          <!-- Categoria + Câmbio -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Categoria *</label>
+              <select id="f-categoria" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Hatch">Hatch</option>
+                <option value="Pickup">Pickup</option>
+                <option value="Esportivo">Esportivo</option>
+                <option value="Elétrico">Elétrico</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Câmbio *</label>
+              <select id="f-cambio" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <option value="Automático">Automático</option>
+                <option value="Manual">Manual</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Preço + Ano -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Preço (R$) *</label>
+              <input type="number" id="f-preco" placeholder="148900" min="1000" required
+                class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Ano *</label>
+              <input type="number" id="f-ano" placeholder="2024" min="2000" max="2026" required
+                class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+          </div>
+
+          <!-- KM + Combustível -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Quilometragem *</label>
+              <input type="number" id="f-km" placeholder="25000" min="0" required
+                class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Combustível *</label>
+              <select id="f-combustivel" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <option value="Flex">Flex</option>
+                <option value="Gasolina">Gasolina</option>
+                <option value="Diesel">Diesel</option>
+                <option value="Elétrico">Elétrico</option>
+                <option value="Híbrido">Híbrido</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Placa + Cor -->
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Placa *</label>
+              <input type="text" id="f-placa" placeholder="ABC1D23" maxlength="8" required
+                class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-blue-600"
+                oninput="this.value = this.value.toUpperCase()">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Cor</label>
+              <input type="text" id="f-cor" placeholder="Prata Lunar"
+                class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+          </div>
+
+          <!-- Badge -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Badge / Etiqueta</label>
+            <input type="text" id="f-badge" placeholder="Ex: Destaque, Novidade, Promoção"
+              class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+          </div>
+
+          <!-- Descrição -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Descrição do Veículo</label>
+            <textarea id="f-descricao" rows="3" placeholder="Descreva os principais recursos e destaques do veículo..."
+              class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none"></textarea>
+          </div>
+
+          <!-- Foto por URL ou arquivo -->
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">URL da Foto</label>
+            <input type="url" id="f-imagem" placeholder="https://..."
+              class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
+              oninput="previewImage(this.value)">
+            <label for="f-imagem-arquivo" class="block font-semibold text-slate-700 mt-3 mb-1">Ou envie uma imagem</label>
+            <input type="file" id="f-imagem-arquivo" accept="image/jpeg,image/png,image/webp,image/gif"
+              class="w-full p-2 text-xs bg-slate-50 border border-slate-300 rounded-lg"
+              onchange="previewUploadedImage(this)">
+            <p class="text-[10px] text-slate-400 mt-1">JPG, PNG, WEBP ou GIF. Tamanho máximo: 5 MB.</p>
+            <img id="img-preview" src="" alt="Preview" class="hidden mt-2 w-full h-28 object-cover rounded-lg border border-slate-200">
+          </div>
+
+          <!-- Preview da URL -->
+          <div id="url-hint" class="text-[10px] text-slate-400 leading-relaxed hidden">
+            💡 Dica: Use links do <strong>Unsplash</strong> (<code>https://images.unsplash.com/photo-ID</code>) ou qualquer URL pública de imagem.
+          </div>
+
+          <!-- Botões -->
+          <div class="flex gap-2 pt-2">
+            <button type="button" onclick="resetForm()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition-colors">
+              Limpar
+            </button>
+            <button type="button" id="cancel-edit-btn" onclick="resetForm()" class="hidden px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition-colors">
+              Cancelar
+            </button>
+            <button type="submit" id="submit-btn" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-colors flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+              Salvar no Estoque
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- COLUNA 2-3: Listagem do Estoque -->
+    <div class="xl:col-span-2 space-y-4">
+      <!-- Header da listagem -->
+      <div class="bg-white rounded-xl border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+        <div>
+          <h2 class="font-extrabold text-slate-900 text-base">Estoque de Veículos</h2>
+          <p class="text-xs text-slate-500">Total: <span id="total-count" class="font-bold text-blue-600">0</span> veículos cadastrados</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="page-size" class="text-xs font-semibold text-slate-600">Exibir</label>
+          <select id="page-size" onchange="changePageSize(this.value)" class="rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+          <button onclick="loadCars()" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          Atualizar
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtro de status -->
+      <div class="flex items-center gap-2">
+        <button onclick="filterStatus('todos')" id="btn-todos" class="status-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 text-white transition-all">Todos</button>
+        <button onclick="filterStatus('disponivel')" id="btn-disponivel" class="status-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Disponíveis</button>
+        <button onclick="filterStatus('reservado')" id="btn-reservado" class="status-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Reservados</button>
+        <button onclick="filterStatus('vendido')" id="btn-vendido" class="status-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all">Vendidos</button>
+      </div>
+
+      <!-- Tabela/Cards de Carros -->
+      <div id="cars-list" class="space-y-3">
+        <div class="text-center py-12 text-slate-400">
+          <svg class="w-10 h-10 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+          <p class="font-medium text-slate-500 text-sm">Carregando estoque...</p>
+        </div>
+      </div>
+      <div id="cars-pagination" class="flex items-center justify-between gap-3 rounded-xl bg-white border border-slate-200 p-3 text-xs"></div>
+    </div>
+
+  </div>
+
+  <section id="carousel-page" class="hidden max-w-7xl mx-auto px-4 py-6" aria-labelledby="carousel-page-title">
+    <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div class="border-b border-slate-200 p-5 sm:p-6">
+        <h1 id="carousel-page-title" class="text-xl font-extrabold text-slate-900">Veículos em destaque no carrossel</h1>
+        <p class="mt-1 text-sm text-slate-600">Escolha até 10 carros para aparecerem no carrossel da loja. A sequência selecionada define a ordem.</p>
+        <p class="mt-3 text-sm font-bold text-blue-700"><span id="carousel-selection-count">0</span>/10 selecionados</p>
+      </div>
+      <div id="carousel-cars-list" class="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="col-span-full py-8 text-center text-sm text-slate-500">Carregando veículos...</p>
+      </div>
+      <div class="flex justify-end border-t border-slate-200 p-5">
+        <button type="button" onclick="saveCarouselSelection()" id="save-carousel-btn" class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50">Salvar seleção do carrossel</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const API = '/api';
+    let allCars = [];
+    let currentFilter = 'todos';
+    let selectedImageData = null;
+    let imageReadPending = false;
+    let editingCarId = null;
+    let pageSize = 10;
+    let currentPage = 1;
+    let filteredCars = [];
+    let selectedCarouselIds = [];
+
+    // ─── Inicialização ─────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      verifyAdminAuth();
+      checkStatus();
+      loadCars();
+    });
+
+    // ─── Verificação de Conta Admin ───────────────────────────────────────────
+    function verifyAdminAuth() {
+      try {
+        const stored = localStorage.getItem('autocar_user') || localStorage.getItem('aura_user');
+        const user = stored ? JSON.parse(stored) : null;
+        const isAdmin = user && user.tipo === 'administrador';
+        
+        if (!isAdmin) {
+          alert('Acesso restrito: Faça login com uma conta de administrador para acessar este painel.');
+          window.location.href = '/';
+          return;
+        }
+
+        const infoSpan = document.getElementById('admin-user-info');
+        const nameSpan = document.getElementById('admin-user-name');
+        if (infoSpan && nameSpan) {
+          infoSpan.classList.remove('hidden');
+          nameSpan.textContent = user.nome || user.email;
+        }
+      } catch (e) {
+        window.location.href = '/';
+      }
+    }
+
+    // ─── Status do servidor ────────────────────────────────────────────────────
+    async function checkStatus() {
+      const badge = document.getElementById('status-badge');
+      try {
+        const resp = await fetch(`${API}/status`);
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data.api_version !== 3) {
+            badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5"></span> Reinicie o server.py`;
+            badge.title = 'O backend ativo está desatualizado. Feche-o com Ctrl+C e execute novamente o server.py desta pasta.';
+            badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-900/50 text-amber-200 border border-amber-700/50';
+            return;
+          }
+          badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> Servidor Online`;
+          badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-900/50 text-emerald-300 border border-emerald-700/50';
+        } else throw new Error();
+      } catch {
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5"></span> Servidor Offline`;
+        badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-900/40 text-red-300 border border-red-700/40';
+      }
+    }
+
+    // ─── Carregar lista de carros ──────────────────────────────────────────────
+    async function loadCars() {
+      const container = document.getElementById('cars-list');
+      container.innerHTML = `<div class="text-center py-12 text-slate-400 text-sm">Carregando estoque...</div>`;
+      try {
+        const resp = await fetch(`${API}/veiculos?todos=1`);
+        if (!resp.ok) throw new Error();
+        allCars = await resp.json();
+        document.getElementById('total-count').textContent = allCars.length;
+        filterStatus(currentFilter);
+        try {
+          await loadCarouselSelection();
+        } catch (error) {
+          selectedCarouselIds = allCars.filter(car => car.status === 'disponivel').slice(0, 10).map(car => Number(car.id));
+          showToast('Atualize o server.py para configurar os veículos do carrossel.', 'error');
+        }
+        renderCarouselCars();
+      } catch {
+        container.innerHTML = `
+          <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <p class="font-bold text-red-700 text-sm">Servidor offline ou indisponível</p>
+            <p class="text-red-500 text-xs mt-1">Certifique-se de que o <code>server.py</code> está rodando na porta 5000.</p>
+          </div>`;
+      }
+    }
+
+    // ─── Filtrar por status ────────────────────────────────────────────────────
+    function filterStatus(status) {
+      currentFilter = status;
+      document.querySelectorAll('.status-filter').forEach(b => {
+        b.className = 'status-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all';
+      });
+      document.getElementById(`btn-${status}`).className = 'status-filter px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 text-white transition-all';
+      filteredCars = status === 'todos' ? allCars : allCars.filter(c => c.status === status);
+      currentPage = 1;
+      renderCars(filteredCars);
+    }
+
+    // ─── Renderizar cards ──────────────────────────────────────────────────────
+    function renderCars(cars) {
+      const container = document.getElementById('cars-list');
+      const pageCount = Math.max(1, Math.ceil(cars.length / pageSize));
+      currentPage = Math.min(currentPage, pageCount);
+      if (cars.length === 0) {
+        container.innerHTML = `<div class="text-center py-12 text-slate-400 text-sm">Nenhum veículo nesta categoria.</div>`;
+      } else {
+        const statusColors = {
+        disponivel: 'bg-emerald-100 text-emerald-700 border-emerald-300',
+        reservado:  'bg-amber-100 text-amber-700 border-amber-300',
+        vendido:    'bg-slate-200 text-slate-600 border-slate-300'
+        };
+        const statusLabels = { disponivel: 'Disponível', reservado: 'Reservado', vendido: 'Vendido' };
+        const pageCars = cars.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+        container.innerHTML = pageCars.map(car => `
+        <div class="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-4 shadow-xs hover:shadow-sm transition-shadow group">
+          
+          <!-- Foto -->
+          <div class="w-24 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+            ${car.image || car.imagem_url
+              ? `<img src="${car.image || car.imagem_url}" alt="${car.title || car.titulo}" class="w-full h-full object-cover">`
+              : `<div class="w-full h-full flex items-center justify-center text-slate-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`}
+          </div>
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">${car.category || car.categoria}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${statusColors[car.status] || 'bg-slate-100 text-slate-600'}">${statusLabels[car.status] || car.status}</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm leading-tight truncate">${car.title || car.titulo}</h3>
+            <div class="flex items-center gap-3 mt-1 text-xs text-slate-500">
+              <span>${car.year || car.ano} • ${Number(car.km).toLocaleString('pt-BR')} km</span>
+              <span class="font-bold text-emerald-600">R$ ${Number(car.price || car.preco).toLocaleString('pt-BR', {minimumFractionDigits:2})}</span>
+              <span class="font-mono text-[10px] text-slate-400">${car.plate || car.placa}</span>
+            </div>
+          </div>
+
+          <!-- Ações -->
+          <div class="flex flex-col gap-1.5 flex-shrink-0">
+            <select onchange="changeStatus(${car.id}, this.value)" 
+              class="text-xs px-2 py-1.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-600">
+              <option value="disponivel" ${car.status === 'disponivel' ? 'selected' : ''}>✅ Disponível</option>
+              <option value="reservado"  ${car.status === 'reservado'  ? 'selected' : ''}>🔒 Reservado</option>
+              <option value="vendido"    ${car.status === 'vendido'    ? 'selected' : ''}>✔️ Vendido</option>
+            </select>
+            <button onclick="deleteCar(${car.id}, '${(car.title || car.titulo).replace(/'/g, "")}')" 
+              class="px-3 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[11px] transition-colors flex items-center gap-1 justify-center border border-red-200">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+              Remover
+            </button>
+            <button onclick="editCar(${car.id})"
+              class="px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[11px] transition-colors flex items-center gap-1 justify-center border border-blue-200">
+              Editar
+            </button>
+          </div>
+        </div>
+        `).join('');
+      }
+
+      const start = cars.length ? (currentPage - 1) * pageSize + 1 : 0;
+      const end = Math.min(currentPage * pageSize, cars.length);
+      document.getElementById('cars-pagination').innerHTML = `
+        <span class="text-slate-600">Exibindo ${start}–${end} de ${cars.length}</span>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="changeCarsPage(-1)" ${currentPage <= 1 ? 'disabled' : ''} class="rounded-lg border border-slate-300 px-3 py-1.5 font-semibold disabled:opacity-40">Anterior</button>
+          <span class="font-bold text-slate-700">${currentPage} / ${pageCount}</span>
+          <button type="button" onclick="changeCarsPage(1)" ${currentPage >= pageCount ? 'disabled' : ''} class="rounded-lg border border-slate-300 px-3 py-1.5 font-semibold disabled:opacity-40">Próxima</button>
+        </div>
+      `;
+    }
+
+    function changePageSize(value) {
+      pageSize = Number(value);
+      currentPage = 1;
+      renderCars(filteredCars);
+    }
+
+    function changeCarsPage(direction) {
+      const pageCount = Math.max(1, Math.ceil(filteredCars.length / pageSize));
+      currentPage = Math.max(1, Math.min(pageCount, currentPage + direction));
+      renderCars(filteredCars);
+    }
+
+    function setAdminPage(page) {
+      const showingCarousel = page === 'carousel';
+      document.getElementById('inventory-page').classList.toggle('hidden', showingCarousel);
+      document.getElementById('carousel-page').classList.toggle('hidden', !showingCarousel);
+      document.getElementById('nav-inventory').className = showingCarousel
+        ? 'rounded-lg px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+        : 'rounded-lg px-4 py-2 text-sm font-bold bg-blue-600 text-white';
+      document.getElementById('nav-carousel').className = showingCarousel
+        ? 'rounded-lg px-4 py-2 text-sm font-bold bg-blue-600 text-white'
+        : 'rounded-lg px-4 py-2 text-sm font-bold bg-white text-slate-700 border border-slate-200 hover:bg-slate-50';
+      if (showingCarousel) renderCarouselCars();
+    }
+
+    async function loadCarouselSelection() {
+      const resp = await fetch(`${API}/carrossel`);
+      if (!resp.ok) throw new Error('Não foi possível carregar a seleção do carrossel.');
+      const ids = await resp.json();
+      selectedCarouselIds = Array.isArray(ids) ? ids.map(Number) : [];
+      if (selectedCarouselIds.length === 0) {
+        selectedCarouselIds = allCars
+          .filter(car => car.status === 'disponivel')
+          .slice(0, 10)
+          .map(car => Number(car.id));
+      }
+    }
+
+    function renderCarouselCars() {
+      const container = document.getElementById('carousel-cars-list');
+      if (!allCars.length) {
+        container.innerHTML = '<p class="col-span-full py-8 text-center text-sm text-slate-500">Cadastre veículos para escolher os destaques.</p>';
+        return;
+      }
+      document.getElementById('carousel-selection-count').textContent = selectedCarouselIds.length;
+      container.innerHTML = allCars.map(car => {
+        const id = Number(car.id);
+        const selected = selectedCarouselIds.includes(id);
+        const atLimit = selectedCarouselIds.length >= 10;
+        return `
+          <label class="flex cursor-pointer items-center gap-3 rounded-xl border ${selected ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-white'} p-3 hover:border-blue-300">
+            <input type="checkbox" class="h-4 w-4 accent-blue-600" value="${id}" ${selected ? 'checked' : ''} ${atLimit && !selected ? 'disabled' : ''} onchange="toggleCarouselCar(${id}, this.checked)">
+            <img src="${car.image || car.imagem_url || ''}" alt="" class="h-16 w-24 rounded-lg bg-slate-100 object-cover" onerror="this.style.visibility='hidden'">
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-sm font-bold text-slate-900">${car.title || car.titulo}</span>
+              <span class="block text-xs text-slate-500">${car.status === 'disponivel' ? 'Disponível' : (car.status || 'Sem status')} · R$ ${Number(car.price || car.preco).toLocaleString('pt-BR')}</span>
+            </span>
+            ${selected ? `<span class="rounded-full bg-blue-600 px-2 py-1 text-xs font-bold text-white">${selectedCarouselIds.indexOf(id) + 1}</span>` : ''}
+          </label>
+        `;
+      }).join('');
+    }
+
+    function toggleCarouselCar(id, selected) {
+      if (selected) {
+        if (selectedCarouselIds.length >= 10) {
+          showToast('O carrossel aceita no máximo 10 veículos.', 'error');
+          renderCarouselCars();
+          return;
+        }
+        selectedCarouselIds.push(Number(id));
+      } else {
+        selectedCarouselIds = selectedCarouselIds.filter(selectedId => selectedId !== Number(id));
+      }
+      renderCarouselCars();
+    }
+
+    async function saveCarouselSelection() {
+      if (selectedCarouselIds.length === 0) {
+        showToast('Selecione pelo menos um veículo para o carrossel.', 'error');
+        return;
+      }
+      const button = document.getElementById('save-carousel-btn');
+      button.disabled = true;
+      try {
+        const resp = await fetch(`${API}/carrossel`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ vehicle_ids: selectedCarouselIds })
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.erro || 'Não foi possível salvar a seleção.');
+        showToast('Seleção do carrossel salva!', 'success');
+      } catch (error) {
+        showToast(error.message || 'Falha ao salvar a seleção do carrossel.', 'error');
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function editCar(id) {
+      const car = allCars.find(item => Number(item.id) === Number(id));
+      if (!car) {
+        showToast('Não foi possível encontrar este veículo no estoque.', 'error');
+        return;
+      }
+
+      editingCarId = Number(car.id);
+      document.getElementById('f-titulo').value = car.title || car.titulo || '';
+      document.getElementById('f-categoria').value = car.category || car.categoria || 'Sedan';
+      document.getElementById('f-preco').value = car.price ?? car.preco ?? '';
+      document.getElementById('f-ano').value = car.year ?? car.ano ?? '';
+      document.getElementById('f-km').value = car.km ?? '';
+      document.getElementById('f-cambio').value = car.transmission || car.cambio || 'Automático';
+      document.getElementById('f-combustivel').value = car.fuel || car.combustivel || 'Flex';
+      document.getElementById('f-placa').value = car.plate || car.placa || '';
+      document.getElementById('f-cor').value = car.color || car.cor || '';
+      document.getElementById('f-badge').value = car.badge || '';
+      document.getElementById('f-descricao').value = car.description || car.descricao || '';
+
+      const imageUrl = car.image || car.imagem_url || '';
+      const urlInput = document.getElementById('f-imagem');
+      urlInput.value = imageUrl.startsWith('http') && !imageUrl.includes('/api/veiculos/')
+        ? imageUrl
+        : '';
+      const preview = document.getElementById('img-preview');
+      if (imageUrl) {
+        preview.src = imageUrl;
+        preview.classList.remove('hidden');
+      } else {
+        preview.removeAttribute('src');
+        preview.classList.add('hidden');
+      }
+
+      document.getElementById('form-title').textContent = 'Editar Veículo';
+      document.getElementById('form-description').textContent = `Corrija os dados de ${car.title || car.titulo}.`;
+      document.getElementById('submit-btn').innerHTML = 'Salvar Alterações';
+      document.getElementById('cancel-edit-btn').classList.remove('hidden');
+      document.getElementById('f-titulo').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // ─── Submeter formulário de novo carro ─────────────────────────────────────
+    async function submitCar(e) {
+      e.preventDefault();
+      if (imageReadPending) {
+        showToast('Aguarde o carregamento da imagem antes de salvar.', 'info');
+        return;
+      }
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Salvando...`;
+
+      const payload = {
+        titulo:      document.getElementById('f-titulo').value.trim(),
+        categoria:   document.getElementById('f-categoria').value,
+        preco:       parseFloat(document.getElementById('f-preco').value),
+        ano:         parseInt(document.getElementById('f-ano').value),
+        km:          parseInt(document.getElementById('f-km').value),
+        cambio:      document.getElementById('f-cambio').value,
+        combustivel: document.getElementById('f-combustivel').value,
+        placa:       document.getElementById('f-placa').value.trim().toUpperCase(),
+        cor:         document.getElementById('f-cor').value.trim(),
+        badge:       document.getElementById('f-badge').value.trim() || 'Destaque',
+        descricao:   document.getElementById('f-descricao').value.trim(),
+        imagem_url:  document.getElementById('f-imagem').value.trim(),
+        imagem_dado: selectedImageData,
+      };
+
+      try {
+        const isEditing = editingCarId !== null;
+        const resp = await fetch(isEditing ? `${API}/veiculos/${editingCarId}` : `${API}/veiculos`, {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.status === 501) {
+          showToast('O servidor ativo está desatualizado. Reinicie o server.py desta pasta e tente novamente.', 'error');
+        } else if (resp.ok && data.sucesso && (!selectedImageData || data.imagem_salva === true)) {
+          showToast(`✅ "${payload.titulo}" ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`, 'success');
+          resetForm();
+          await loadCars();
+          filterStatus(currentFilter);
+        } else if (resp.ok && data.sucesso && selectedImageData) {
+          showToast('⚠️ O servidor ativo não confirmou a gravação da imagem. Reinicie o server.py antes de tentar novamente.', 'error');
+          await loadCars();
+        } else {
+          showToast(`❌ Erro: ${data.erro}`, 'error');
+        }
+      } catch {
+        showToast('❌ Servidor offline. Verifique se o server.py está rodando.', 'error');
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = editingCarId === null
+        ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Salvar no Estoque`
+        : 'Salvar Alterações';
+    }
+
+    // ─── Mudar status do carro ─────────────────────────────────────────────────
+    async function changeStatus(id, novoStatus) {
+      try {
+        const resp = await fetch(`${API}/veiculos/${id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: novoStatus })
+        });
+        if (resp.ok) {
+          showToast(`Status atualizado para "${novoStatus}"`, 'success');
+          await loadCars();
+          filterStatus(currentFilter);
+        } else {
+          showToast('Erro ao atualizar status.', 'error');
+        }
+      } catch {
+        showToast('Servidor offline.', 'error');
+      }
+    }
+
+    // ─── Remover carro ─────────────────────────────────────────────────────────
+    async function deleteCar(id, titulo) {
+      if (!confirm(`Tem certeza que deseja remover "${titulo}" do estoque?\n\nEsta ação não pode ser desfeita.`)) return;
+      try {
+        const resp = await fetch(`${API}/veiculos/${id}`, { method: 'DELETE' });
+        if (resp.ok) {
+          showToast(`Veículo "${titulo}" removido do estoque.`, 'success');
+          await loadCars();
+          filterStatus(currentFilter);
+        } else {
+          showToast('Erro ao remover veículo.', 'error');
+        }
+      } catch {
+        showToast('Servidor offline.', 'error');
+      }
+    }
+
+    // ─── Preview da foto ───────────────────────────────────────────────────────
+    function previewImage(url) {
+      const img = document.getElementById('img-preview');
+      const hint = document.getElementById('url-hint');
+      if (url) {
+        selectedImageData = null;
+        document.getElementById('f-imagem-arquivo').value = '';
+      }
+      if (url && url.startsWith('http')) {
+        img.src = url;
+        img.classList.remove('hidden');
+        hint.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        hint.classList.toggle('hidden', !url);
+      }
+    }
+
+    function previewUploadedImage(input) {
+      const file = input.files[0];
+      if (!file) {
+        selectedImageData = null;
+        return;
+      }
+
+      if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type) || file.size > 5 * 1024 * 1024) {
+        showToast('Selecione uma imagem JPG, PNG, WEBP ou GIF de até 5 MB.', 'error');
+        input.value = '';
+        selectedImageData = null;
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        selectedImageData = String(reader.result);
+        imageReadPending = false;
+        document.getElementById('f-imagem').value = '';
+        document.getElementById('img-preview').src = selectedImageData;
+        document.getElementById('img-preview').classList.remove('hidden');
+        document.getElementById('url-hint').classList.add('hidden');
+      };
+      reader.onerror = () => {
+        imageReadPending = false;
+        selectedImageData = null;
+        showToast('Não foi possível ler o arquivo de imagem.', 'error');
+      };
+      imageReadPending = true;
+      reader.readAsDataURL(file);
+    }
+
+    // ─── Limpar formulário ─────────────────────────────────────────────────────
+    function resetForm() {
+      document.getElementById('car-form').reset();
+      document.getElementById('img-preview').classList.add('hidden');
+      document.getElementById('url-hint').classList.add('hidden');
+      selectedImageData = null;
+      imageReadPending = false;
+      editingCarId = null;
+      document.getElementById('form-title').textContent = 'Cadastrar Novo Veículo';
+      document.getElementById('form-description').textContent = 'Preencha os dados e clique em Salvar';
+      document.getElementById('submit-btn').innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Salvar no Estoque`;
+      document.getElementById('cancel-edit-btn').classList.add('hidden');
+    }
+
+    // ─── Toast ─────────────────────────────────────────────────────────────────
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const colors = {
+        success: 'bg-emerald-600 text-white',
+        error:   'bg-red-600 text-white',
+        info:    'bg-blue-600 text-white'
+      };
+      const div = document.createElement('div');
+      div.className = `toast pointer-events-auto px-4 py-3 rounded-xl shadow-xl text-sm font-semibold max-w-sm ${colors[type]}`;
+      div.textContent = msg;
+      container.appendChild(div);
+      setTimeout(() => div.remove(), 4000);
+    }
+  </script>
+</body>
+</html>
