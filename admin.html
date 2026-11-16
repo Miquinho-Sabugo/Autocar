@@ -14,14 +14,78 @@
     }
     .toast { animation: slideIn 0.3s ease; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    html.high-contrast,
+    html.high-contrast body {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+    html.high-contrast header,
+    html.high-contrast [class*="bg-white"],
+    html.high-contrast [class*="bg-slate-50"],
+    html.high-contrast [class*="bg-slate-100"],
+    html.high-contrast [class*="bg-blue-50"] {
+      background-color: #0a0a0a !important;
+      color: #ffffff !important;
+      border-color: #facc15 !important;
+    }
+    html.high-contrast h1,
+    html.high-contrast h2,
+    html.high-contrast h3,
+    html.high-contrast span,
+    html.high-contrast label,
+    html.high-contrast p {
+      color: #ffffff !important;
+    }
+    html.high-contrast input,
+    html.high-contrast select,
+    html.high-contrast textarea {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 2px solid #ffffff !important;
+    }
+    html.high-contrast button {
+      border: 1.5px solid #facc15 !important;
+    }
+    html.dark-mode,
+    html.dark-mode body {
+      background-color: #0b1120 !important;
+      color: #e2e8f0 !important;
+    }
+    html.dark-mode [class*="bg-white"],
+    html.dark-mode [class*="bg-slate-50"],
+    html.dark-mode [class*="bg-slate-100"] {
+      background-color: #111827 !important;
+      border-color: #273449 !important;
+    }
+    html.dark-mode h1,
+    html.dark-mode h2,
+    html.dark-mode h3,
+    html.dark-mode [class*="text-slate-900"],
+    html.dark-mode [class*="text-slate-800"] {
+      color: #f8fafc !important;
+    }
+    html.dark-mode [class*="text-slate-700"],
+    html.dark-mode [class*="text-slate-600"],
+    html.dark-mode [class*="text-slate-500"] {
+      color: #cbd5e1 !important;
+    }
+    html.dark-mode input,
+    html.dark-mode select,
+    html.dark-mode textarea {
+      background-color: #0f172a !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
   </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
 
+  <div id="a11y-live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
   <!-- Header -->
   <header class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between shadow-xl border-b border-slate-700">
     <div class="flex items-center gap-3">
-      <img src="favicon.svg" alt="" class="w-9 h-9 rounded-lg flex-shrink-0">
+      <img src="favicon.svg" alt="Logotipo da AutoCar Seminovos" class="w-9 h-9 rounded-lg flex-shrink-0">
       <div>
         <span class="font-black text-lg tracking-tight">AUTO<span class="text-blue-400">CAR</span></span>
         <span class="block text-[10px] text-slate-400 uppercase tracking-widest">Painel Administrativo</span>
@@ -34,6 +98,34 @@
       <span id="status-badge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700">
         <span class="w-1.5 h-1.5 rounded-full bg-slate-500 mr-1.5"></span> Verificando...
       </span>
+      <button type="button" id="dark-mode-btn" onclick="toggleDarkMode()" aria-pressed="false" title="Ativar modo escuro" aria-label="Ativar modo escuro" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-500 hover:border-slate-400 transition-colors">
+        <svg id="dark-mode-icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+        <svg id="dark-mode-icon-sun" class="hidden w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+      </button>
+      <div id="a11y-menu-container" class="relative">
+        <button type="button" id="a11y-menu-btn" onclick="toggleA11yMenu(event)" aria-expanded="false" title="Acessibilidade" aria-label="Abrir opções de acessibilidade" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-500 hover:border-slate-400 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="4.5" r="2" stroke-width="2"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8.5h14M12 8.5v5m0 0l-3 6m3-6l3 6"></path>
+          </svg>
+        </button>
+        <div id="a11y-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-xl bg-slate-900 p-3 shadow-xl border border-slate-700 z-50 text-xs space-y-2.5 text-white">
+          <span class="block text-[11px] font-bold text-slate-300">Acessibilidade</span>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button type="button" onclick="changeFontSize(-1)" class="py-1 rounded bg-slate-800 hover:bg-slate-700 font-bold border border-slate-600" aria-label="Diminuir fonte">A-</button>
+            <button type="button" onclick="resetFontSize()" id="a11y-font-indicator" class="py-1 rounded bg-slate-800 hover:bg-slate-700 font-semibold border border-slate-600" aria-label="Fonte padrão">100%</button>
+            <button type="button" onclick="changeFontSize(1)" class="py-1 rounded bg-slate-800 hover:bg-slate-700 font-bold border border-slate-600" aria-label="Aumentar fonte">A+</button>
+          </div>
+          <button type="button" id="a11y-contrast-btn" onclick="toggleHighContrast()" aria-pressed="false" class="w-full py-1.5 px-2.5 rounded bg-slate-800 hover:bg-slate-700 font-semibold border border-slate-600 flex items-center justify-between">
+            <span>Alto Contraste</span>
+            <span id="a11y-contrast-status" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-700">Off</span>
+          </button>
+        </div>
+      </div>
       <a href="/" class="text-xs px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors">← Ver Loja</a>
     </div>
   </header>
@@ -372,7 +464,7 @@
           <!-- Foto -->
           <div class="w-24 h-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
             ${car.image || car.imagem_url
-              ? `<img src="${car.image || car.imagem_url}" alt="${car.title || car.titulo}" class="w-full h-full object-cover">`
+              ? `<img src="${car.image || car.imagem_url}" alt="Foto do veículo ${car.title || car.titulo}, ano ${car.year || car.ano}" class="w-full h-full object-cover">`
               : `<div class="w-full h-full flex items-center justify-center text-slate-300"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>`}
           </div>
 
@@ -476,7 +568,7 @@
         return `
           <label class="flex cursor-pointer items-center gap-3 rounded-xl border ${selected ? 'border-blue-500 bg-blue-50' : 'border-slate-200 bg-white'} p-3 hover:border-blue-300">
             <input type="checkbox" class="h-4 w-4 accent-blue-600" value="${id}" ${selected ? 'checked' : ''} ${atLimit && !selected ? 'disabled' : ''} onchange="toggleCarouselCar(${id}, this.checked)">
-            <img src="${car.image || car.imagem_url || ''}" alt="" class="h-16 w-24 rounded-lg bg-slate-100 object-cover" onerror="this.style.visibility='hidden'">
+            <img src="${car.image || car.imagem_url || ''}" alt="Foto do veículo ${car.title || car.titulo}" class="h-16 w-24 rounded-lg bg-slate-100 object-cover" onerror="this.style.visibility='hidden'">
             <span class="min-w-0 flex-1">
               <span class="block truncate text-sm font-bold text-slate-900">${car.title || car.titulo}</span>
               <span class="block text-xs text-slate-500">${car.status === 'disponivel' ? 'Disponível' : (car.status || 'Sem status')} · R$ ${Number(car.price || car.preco).toLocaleString('pt-BR')}</span>
@@ -739,6 +831,76 @@
       container.appendChild(div);
       setTimeout(() => div.remove(), 4000);
     }
+
+    // ─── Acessibilidade (Fonte e Alto Contraste compartilhados com a loja) ────
+    const A11Y_FONT_STEPS = [87.5, 93.75, 100, 106.25, 112.5, 118.75, 125];
+    let currentFontScale = Number(localStorage.getItem('autocar_font_scale')) || 100;
+    let isHighContrast = localStorage.getItem('autocar_high_contrast') === 'true';
+    let isDarkMode = localStorage.getItem('autocar_dark_mode') === 'true';
+
+    function toggleA11yMenu(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('a11y-dropdown-menu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+    document.addEventListener('click', (e) => {
+      const c = document.getElementById('a11y-menu-container');
+      const m = document.getElementById('a11y-dropdown-menu');
+      if (m && !m.classList.contains('hidden') && c && !c.contains(e.target)) m.classList.add('hidden');
+    });
+    function applyFontSize(scale) {
+      if (!A11Y_FONT_STEPS.includes(scale)) scale = 100;
+      currentFontScale = scale;
+      document.documentElement.style.fontSize = `${scale}%`;
+      localStorage.setItem('autocar_font_scale', String(scale));
+      const ind = document.getElementById('a11y-font-indicator');
+      if (ind) ind.textContent = `${Math.round(scale)}%`;
+    }
+    function changeFontSize(dir) {
+      const idx = A11Y_FONT_STEPS.indexOf(currentFontScale);
+      const base = idx === -1 ? A11Y_FONT_STEPS.indexOf(100) : idx;
+      applyFontSize(A11Y_FONT_STEPS[Math.max(0, Math.min(A11Y_FONT_STEPS.length - 1, base + dir))]);
+    }
+    function resetFontSize() { applyFontSize(100); }
+    function applyHighContrast(enabled) {
+      isHighContrast = Boolean(enabled);
+      if (isHighContrast && isDarkMode) applyDarkMode(false);
+      document.documentElement.classList.toggle('high-contrast', isHighContrast);
+      localStorage.setItem('autocar_high_contrast', String(isHighContrast));
+      const btn = document.getElementById('a11y-contrast-btn');
+      const st = document.getElementById('a11y-contrast-status');
+      if (btn) btn.setAttribute('aria-pressed', String(isHighContrast));
+      if (st) st.textContent = isHighContrast ? 'On' : 'Off';
+    }
+    function toggleHighContrast() { applyHighContrast(!isHighContrast); }
+    function applyDarkMode(enabled) {
+      isDarkMode = Boolean(enabled);
+      if (isDarkMode && isHighContrast) applyHighContrast(false);
+      document.documentElement.classList.toggle('dark-mode', isDarkMode);
+      localStorage.setItem('autocar_dark_mode', String(isDarkMode));
+      const btn = document.getElementById('dark-mode-btn');
+      const moon = document.getElementById('dark-mode-icon-moon');
+      const sun = document.getElementById('dark-mode-icon-sun');
+      if (btn) btn.setAttribute('aria-pressed', String(isDarkMode));
+      if (moon) moon.classList.toggle('hidden', isDarkMode);
+      if (sun) sun.classList.toggle('hidden', !isDarkMode);
+    }
+    function toggleDarkMode() { applyDarkMode(!isDarkMode); }
+    applyFontSize(currentFontScale);
+    applyHighContrast(isHighContrast);
+    applyDarkMode(isDarkMode);
+  </script>
+
+  <!-- Widget Oficial VLibras (Governo Federal) - Acessibilidade em Libras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
   </script>
 </body>
 </html>

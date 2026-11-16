@@ -86,6 +86,193 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
+    /* ==========================================
+       ACESSIBILIDADE: ALTO CONTRASTE E FOCO VISÍVEL
+       ========================================== */
+    .skip-to-content {
+      position: absolute;
+      left: -9999px;
+      top: 0.5rem;
+      z-index: 9999;
+      background: #1d4ed8;
+      color: #ffffff;
+      padding: 0.625rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+    .skip-to-content:focus {
+      left: 0.75rem;
+      outline: 3px solid #facc15;
+    }
+    html.high-contrast,
+    html.high-contrast body {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+    html.high-contrast header,
+    html.high-contrast footer,
+    html.high-contrast section,
+    html.high-contrast article,
+    html.high-contrast nav,
+    html.high-contrast aside,
+    html.high-contrast [class*="bg-white"],
+    html.high-contrast [class*="bg-slate-50"],
+    html.high-contrast [class*="bg-slate-100"],
+    html.high-contrast [class*="bg-blue-50"],
+    html.high-contrast [class*="bg-emerald-50"],
+    html.high-contrast [class*="bg-violet-50"],
+    html.high-contrast [class*="bg-amber-50"],
+    html.high-contrast [class*="bg-[#eef4fa]"] {
+      background-color: #0a0a0a !important;
+      color: #ffffff !important;
+      border-color: #facc15 !important;
+    }
+    html.high-contrast h1,
+    html.high-contrast h2,
+    html.high-contrast h3,
+    html.high-contrast h4,
+    html.high-contrast h5,
+    html.high-contrast strong,
+    html.high-contrast [class*="text-[#102b4c]"],
+    html.high-contrast [class*="text-slate-900"],
+    html.high-contrast [class*="text-slate-800"] {
+      color: #ffffff !important;
+    }
+    html.high-contrast p,
+    html.high-contrast span,
+    html.high-contrast label,
+    html.high-contrast li,
+    html.high-contrast [class*="text-slate-700"],
+    html.high-contrast [class*="text-slate-600"],
+    html.high-contrast [class*="text-slate-500"],
+    html.high-contrast [class*="text-slate-400"] {
+      color: #f3f4f6 !important;
+    }
+    html.high-contrast a,
+    html.high-contrast .design-eyebrow,
+    html.high-contrast [class*="text-blue-"],
+    html.high-contrast [class*="text-emerald-"],
+    html.high-contrast [class*="text-violet-"] {
+      color: #facc15 !important;
+    }
+    html.high-contrast input,
+    html.high-contrast select,
+    html.high-contrast textarea {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 2px solid #ffffff !important;
+    }
+    html.high-contrast button {
+      border: 1.5px solid #facc15 !important;
+    }
+    html.high-contrast *:focus-visible {
+      outline: 3px solid #facc15 !important;
+      outline-offset: 2px !important;
+    }
+    body.a11y-voice-active [data-a11y-speaking="true"] {
+      outline: 3px dashed #2563eb !important;
+      outline-offset: 2px !important;
+    }
+    /* ==========================================
+       MODO ESCURO (DARK MODE)
+       ========================================== */
+    html.dark-mode,
+    html.dark-mode body {
+      background-color: #0b1120 !important;
+      color: #e2e8f0 !important;
+    }
+    html.dark-mode header#header-nav {
+      background-color: rgba(15, 23, 42, 0.92) !important;
+      border-bottom-color: #1e293b !important;
+    }
+    html.dark-mode footer {
+      background-color: #090d16 !important;
+      border-top-color: #1e293b !important;
+    }
+    html.dark-mode [class*="bg-white"],
+    html.dark-mode [class*="bg-slate-50"],
+    html.dark-mode [class*="bg-slate-100"] {
+      background-color: #111827 !important;
+      border-color: #273449 !important;
+    }
+    html.dark-mode [class*="bg-[#eef4fa]"],
+    html.dark-mode [class*="bg-blue-50"],
+    html.dark-mode [class*="bg-emerald-50"],
+    html.dark-mode [class*="bg-violet-50"],
+    html.dark-mode [class*="bg-amber-50"] {
+      background-color: #172033 !important;
+      border-color: #2c3a52 !important;
+    }
+    html.dark-mode h1,
+    html.dark-mode h2,
+    html.dark-mode h3,
+    html.dark-mode h4,
+    html.dark-mode h5,
+    html.dark-mode strong,
+    html.dark-mode [class*="text-[#102b4c]"],
+    html.dark-mode [class*="text-slate-900"],
+    html.dark-mode [class*="text-slate-800"] {
+      color: #f8fafc !important;
+    }
+    html.dark-mode [class*="text-slate-700"],
+    html.dark-mode [class*="text-slate-600"] {
+      color: #cbd5e1 !important;
+    }
+    html.dark-mode [class*="text-slate-500"],
+    html.dark-mode [class*="text-slate-400"] {
+      color: #94a3b8 !important;
+    }
+    html.dark-mode [class*="text-blue-700"],
+    html.dark-mode [class*="text-blue-800"],
+    html.dark-mode [class*="text-blue-900"] {
+      color: #60a5fa !important;
+    }
+    html.dark-mode .bg-blue-600,
+    html.dark-mode .bg-blue-700,
+    html.dark-mode .bg-emerald-600,
+    html.dark-mode .bg-violet-600 {
+      color: #ffffff !important;
+    }
+    html.dark-mode .bg-blue-600 *,
+    html.dark-mode .bg-blue-700 *,
+    html.dark-mode .bg-violet-600 * {
+      color: #ffffff !important;
+    }
+    html.dark-mode input,
+    html.dark-mode select,
+    html.dark-mode textarea {
+      background-color: #0f172a !important;
+      color: #f1f5f9 !important;
+      border-color: #334155 !important;
+    }
+    html.dark-mode input::placeholder,
+    html.dark-mode textarea::placeholder {
+      color: #64748b !important;
+    }
+    html.dark-mode .border-slate-200,
+    html.dark-mode .border-slate-100,
+    html.dark-mode .border-slate-300 {
+      border-color: #273449 !important;
+    }
+    html.dark-mode #a11y-menu-btn,
+    html.dark-mode #dark-mode-btn {
+      background-color: #1e293b !important;
+      border-color: #475569 !important;
+      color: #e2e8f0 !important;
+    }
+    html.dark-mode #a11y-menu-btn:hover,
+    html.dark-mode #dark-mode-btn:hover {
+      background-color: #334155 !important;
+      border-color: #60a5fa !important;
+      color: #ffffff !important;
+    }
+    html.dark-mode #a11y-dropdown-menu,
+    html.dark-mode #user-dropdown-menu {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+    }
   </style>
   <script>
     const navigationEntry = performance.getEntriesByType('navigation')[0];
@@ -97,6 +284,12 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
+  <!-- Link de Pular para o Conteúdo Principal (Leitores de Tela / Teclado) -->
+  <a href="#catalogo" class="skip-to-content">Pular para o catálogo de veículos</a>
+
+  <!-- Região ARIA Live para anúncios automáticos em Leitores de Tela -->
+  <div id="a11y-live-region" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
   <!-- ==========================================
        HEADER PRINCIPAL
        ========================================== -->
@@ -105,8 +298,8 @@
       <div class="flex items-center justify-between min-h-[72px] gap-3">
         
         <!-- Logo da Concessionária -->
-        <a href="#inicio" class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-1 flex-shrink-0">
-          <img src="favicon.svg" alt="" class="w-9 h-9 rounded-lg shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
+        <a href="#inicio" class="flex items-center gap-2.5 group focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-lg p-1 flex-shrink-0" aria-label="AutoCar Seminovos - Ir para o início">
+          <img src="favicon.svg" alt="Logotipo da AutoCar Seminovos" class="w-9 h-9 rounded-lg shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
           <div>
             <span class="text-lg font-extrabold tracking-tight text-[#102b4c] group-hover:text-blue-600 transition-colors">AutoCar</span>
             <span class="block text-[9px] font-medium text-slate-500 uppercase tracking-wider">Seminovos</span>
@@ -216,6 +409,108 @@
             <span class="hidden sm:inline">Garagem</span>
             <span id="cart-counter" class="rounded-full bg-white px-1.5 py-0.2 text-xs font-black text-blue-700 transition-transform">0</span>
           </button>
+
+          <!-- Botão Modo Escuro -->
+          <button
+            type="button"
+            id="dark-mode-btn"
+            onclick="toggleDarkMode()"
+            aria-pressed="false"
+            title="Ativar modo escuro"
+            aria-label="Ativar modo escuro"
+            class="order-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 shadow-2xs transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          >
+            <svg id="dark-mode-icon-moon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+            <svg id="dark-mode-icon-sun" class="hidden w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </button>
+
+          <!-- Botão Discreto de Acessibilidade -->
+          <div id="a11y-menu-container" class="relative order-4">
+            <button
+              type="button"
+              id="a11y-menu-btn"
+              onclick="toggleA11yMenu(event)"
+              aria-expanded="false"
+              aria-haspopup="true"
+              title="Opções de Acessibilidade (Fonte, Contraste e Leitura)"
+              aria-label="Abrir menu de acessibilidade"
+              class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 shadow-2xs transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="4.5" r="2" stroke-width="2"></circle>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8.5h14M12 8.5v5m0 0l-3 6m3-6l3 6"></path>
+              </svg>
+            </button>
+
+            <!-- Popover de Acessibilidade -->
+            <div
+              id="a11y-dropdown-menu"
+              role="dialog"
+              aria-label="Configurações de acessibilidade"
+              class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white p-3.5 shadow-xl border border-slate-200 z-50 text-xs space-y-3"
+            >
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="4.5" r="2" stroke-width="2"></circle>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8.5h14M12 8.5v5m0 0l-3 6m3-6l3 6"></path>
+                  </svg>
+                  Acessibilidade
+                </span>
+                <span class="text-[10px] text-slate-400 font-medium">Alt + 1/2/3</span>
+              </div>
+
+              <!-- Ajuste de Fonte -->
+              <div>
+                <span class="block text-[11px] font-semibold text-slate-600 mb-1.5">Tamanho do texto</span>
+                <div class="grid grid-cols-3 gap-1.5">
+                  <button type="button" onclick="changeFontSize(-1)" class="py-1.5 px-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-center" title="Diminuir fonte" aria-label="Diminuir tamanho da fonte">
+                    A-
+                  </button>
+                  <button type="button" onclick="resetFontSize()" id="a11y-font-indicator" class="py-1.5 px-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-semibold text-slate-700 text-center" title="Fonte padrão" aria-label="Tamanho da fonte 100%, clique para restaurar padrão">
+                    100%
+                  </button>
+                  <button type="button" onclick="changeFontSize(1)" class="py-1.5 px-2 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-center" title="Aumentar fonte" aria-label="Aumentar tamanho da fonte">
+                    A+
+                  </button>
+                </div>
+              </div>
+
+              <!-- Alto Contraste -->
+              <button
+                type="button"
+                id="a11y-contrast-btn"
+                onclick="toggleHighContrast()"
+                aria-pressed="false"
+                class="w-full py-2 px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold flex items-center justify-between transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                  Alto Contraste
+                </span>
+                <span id="a11y-contrast-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Off</span>
+              </button>
+
+              <!-- Leitura em Voz Alta -->
+              <button
+                type="button"
+                id="a11y-voice-btn"
+                onclick="toggleVoiceReader()"
+                aria-pressed="false"
+                class="w-full py-2 px-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold flex items-center justify-between transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                  <span id="a11y-voice-label">Leitura por Voz</span>
+                </span>
+                <span id="a11y-voice-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Off</span>
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -2503,7 +2798,7 @@
             
             <!-- Imagem Vetorial Placeholder com Badges -->
             <div class="relative bg-slate-100 aspect-16/10 overflow-hidden cursor-pointer" onclick="openCarDetails(${car.id})">
-              <img src="${car.image}" alt="${car.title}" loading="lazy" onerror="this.onerror=null;this.src=createCarPlaceholder('${car.title.replace(/'/g, "\\'")}', '${car.category}', '#1e293b', '#0f172a');" class="w-full h-48 object-cover group-hover:scale-102 transition-transform duration-300">
+              <img src="${car.image}" alt="${getCarAltText(car)}" loading="lazy" onerror="this.onerror=null;this.src=createCarPlaceholder('${car.title.replace(/'/g, "\\'")}', '${car.category}', '#1e293b', '#0f172a');" class="w-full h-48 object-cover group-hover:scale-102 transition-transform duration-300">
               
               <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%]">
                 <span class="px-2.5 py-1 rounded-md text-[11px] font-bold ${catBadge} shadow-xs truncate">
@@ -2520,6 +2815,8 @@
                 onclick="event.stopPropagation(); toggleWishlist(${car.id})" 
                 class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-slate-700 flex items-center justify-center shadow-md transition-colors ${isFavorite ? 'text-rose-500' : ''}"
                 title="${isFavorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}"
+                aria-label="${isFavorite ? 'Remover ' + car.title + ' dos favoritos' : 'Salvar ' + car.title + ' nos favoritos'}"
+                aria-pressed="${isFavorite ? 'true' : 'false'}"
               >
                 <svg class="w-4 h-4 ${isFavorite ? 'fill-current text-rose-500' : 'stroke-current'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
@@ -2668,9 +2965,9 @@
       const imageLink = document.getElementById('hero-car-image-link');
       if (image) {
         image.src = vehicle.image;
-        image.alt = `${vehicle.title} em destaque`;
+        image.alt = getCarAltText(vehicle);
       }
-      if (imageLink) imageLink.setAttribute('aria-label', `Ver detalhes de ${vehicle.title}`);
+      if (imageLink) imageLink.setAttribute('aria-label', `Ver detalhes de ${vehicle.title}, ${vehicle.year}, por ${formatMoney(vehicle.price)}`);
       const dots = document.getElementById('hero-carousel-dots');
       if (dots) {
         dots.replaceChildren(...vehicles.map((item, index) => {
@@ -2764,12 +3061,12 @@
           outgoingAnimation.cancel();
           incomingAnimation.cancel();
           image.src = nextVehicle.image;
-          image.alt = `${nextVehicle.title} em destaque`;
+          image.alt = getCarAltText(nextVehicle);
           nextImage.style.opacity = '0';
           nextImage.removeAttribute('src');
         } else if (image) {
           image.src = nextVehicle.image;
-          image.alt = `${nextVehicle.title} em destaque`;
+          image.alt = getCarAltText(nextVehicle);
         }
 
         heroVehicleIndex = nextIndex;
@@ -3080,7 +3377,7 @@
 
         itemsList.innerHTML = cart.map(item => `
           <div class="p-3 bg-white border border-slate-200 rounded-xl flex gap-3 items-center shadow-2xs">
-            <img src="${item.image}" alt="${item.title}" class="w-20 h-16 object-cover rounded-lg bg-slate-100 flex-shrink-0" onerror="this.onerror=null;this.src=createCarPlaceholder('${item.title.replace(/'/g, "\\'")}', '${item.category}', '#1e293b', '#0f172a');">
+            <img src="${item.image}" alt="${getCarAltText(item)}" class="w-20 h-16 object-cover rounded-lg bg-slate-100 flex-shrink-0" onerror="this.onerror=null;this.src=createCarPlaceholder('${item.title.replace(/'/g, "\\'")}', '${item.category}', '#1e293b', '#0f172a');">
             <div class="flex-1 min-w-0">
               <span class="text-[10px] font-bold text-blue-600 uppercase">${item.category} • ${item.year}</span>
               <h4 class="text-xs font-bold text-slate-900 truncate">${item.title}</h4>
@@ -3311,7 +3608,7 @@
       body.innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <img src="${car.image}" alt="${car.title}" class="w-full rounded-xl bg-slate-100 object-cover shadow-sm">
+            <img src="${car.image}" alt="${getCarAltText(car)}" class="w-full rounded-xl bg-slate-100 object-cover shadow-sm">
             <div class="mt-4 p-4 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 space-y-1">
               <span class="font-bold flex items-center gap-1.5">
                 <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -3709,6 +4006,7 @@
        13. SISTEMA DE TOASTS
        ========================================== */
     function showToast(message, type = 'info') {
+      announceToScreenReader(message);
       const container = document.getElementById('toast-container');
       if (!container) return;
 
@@ -3970,7 +4268,282 @@
           <p class="text-[11px] text-slate-400 text-center">*Simulação meramente informativa. Sujeita a análise de crédito.</p>
         </div>
       `;
+      announceToScreenReader(`Simulação concluída: ${prazo} parcelas de ${formatMoney(parcela)}, total a pagar ${formatMoney(totalPago)}.`);
     }
+
+    /* ==========================================
+       15. ACESSIBILIDADE (TEXTO ALTERNATIVO, FONTE, ALTO CONTRASTE E LEITOR DE TELA)
+       ========================================== */
+    const A11Y_FONT_STEPS = [87.5, 93.75, 100, 106.25, 112.5, 118.75, 125];
+    let currentFontScale = Number(localStorage.getItem('autocar_font_scale')) || 100;
+    let isHighContrast = localStorage.getItem('autocar_high_contrast') === 'true';
+    let isDarkMode = localStorage.getItem('autocar_dark_mode') === 'true';
+    let isVoiceReaderActive = localStorage.getItem('autocar_voice_reader') === 'true';
+
+    function getCarAltText(car) {
+      if (!car) return 'Foto de veículo seminovo na AutoCar';
+      const parts = [`Foto do veículo ${car.title || 'Seminovo'}`];
+      if (car.category) parts.push(`categoria ${car.category}`);
+      if (car.year) parts.push(`ano ${car.year}`);
+      if (car.color) parts.push(`cor ${car.color}`);
+      if (car.transmission) parts.push(`câmbio ${car.transmission}`);
+      if (car.fuel) parts.push(`combustível ${car.fuel}`);
+      if (car.km !== undefined && car.km !== null) parts.push(`${Number(car.km).toLocaleString('pt-BR')} quilômetros rodados`);
+      if (car.price) parts.push(`preço ${formatMoney(car.price)}`);
+      return parts.join(', ').replace(/"/g, '&quot;');
+    }
+
+    let speechTimeoutId = null;
+    let lastSpokenText = '';
+    let lastSpokenTime = 0;
+
+    function getBestPtBrVoice() {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      const ptVoices = voices.filter(v => /^pt[-_]?br/i.test(v.lang) || /^pt/i.test(v.lang));
+      if (!ptVoices.length) return null;
+      return (
+        ptVoices.find(v => /google|natural|neural|francisca|antonio|luciana|maria/i.test(v.name)) ||
+        ptVoices.find(v => /^pt[-_]?br/i.test(v.lang)) ||
+        ptVoices[0]
+      );
+    }
+
+    function normalizeSpeechText(raw) {
+      if (!raw) return '';
+      return String(raw)
+        .replace(/[↗♧•·|]/g, ', ')
+        .replace(/\bR\$\s?([\d.,]+)/g, '$1 reais')
+        .replace(/\b(\d[\d.]*)\s?km\b/gi, '$1 quilômetros')
+        .replace(/\ba\.m\./gi, 'ao mês')
+        .replace(/\s*\n+\s*/g, '. ')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    }
+
+    function speakText(text, force = false) {
+      if (!isVoiceReaderActive || !('speechSynthesis' in window) || !text) return;
+      const clean = normalizeSpeechText(text);
+      if (!clean) return;
+      const now = Date.now();
+      if (!force && clean === lastSpokenText && now - lastSpokenTime < 900) return;
+      lastSpokenText = clean;
+      lastSpokenTime = now;
+
+      clearTimeout(speechTimeoutId);
+      try {
+        window.speechSynthesis.cancel();
+      } catch (_) {}
+
+      // Pequeno intervalo após cancel() evita que o sintetizador no Linux corte a 1ª palavra
+      speechTimeoutId = setTimeout(() => {
+        try {
+          const utterance = new SpeechSynthesisUtterance(clean);
+          const bestVoice = getBestPtBrVoice();
+          if (bestVoice) utterance.voice = bestVoice;
+          utterance.lang = 'pt-BR';
+          utterance.rate = 0.95;
+          utterance.pitch = 1.0;
+          window.speechSynthesis.speak(utterance);
+        } catch (_) {}
+      }, 90);
+    }
+
+    function announceToScreenReader(message) {
+      const region = document.getElementById('a11y-live-region');
+      if (region) {
+        region.textContent = '';
+        setTimeout(() => { region.textContent = message; }, 50);
+      }
+      if (isVoiceReaderActive) {
+        speakText(message, true);
+      }
+    }
+
+    function toggleA11yMenu(event) {
+      if (event) event.stopPropagation();
+      const menu = document.getElementById('a11y-dropdown-menu');
+      const btn = document.getElementById('a11y-menu-btn');
+      if (!menu) return;
+      const isHidden = menu.classList.toggle('hidden');
+      if (btn) btn.setAttribute('aria-expanded', String(!isHidden));
+    }
+
+    function applyFontSize(scale, announce = false) {
+      if (!A11Y_FONT_STEPS.includes(scale)) scale = 100;
+      currentFontScale = scale;
+      document.documentElement.style.fontSize = `${scale}%`;
+      localStorage.setItem('autocar_font_scale', String(scale));
+      const indicator = document.getElementById('a11y-font-indicator');
+      if (indicator) {
+        indicator.textContent = `${Math.round(scale)}%`;
+        indicator.setAttribute('aria-label', `Tamanho da fonte ${Math.round(scale)}%, clique para restaurar padrão`);
+      }
+      if (announce) {
+        announceToScreenReader(`Tamanho da fonte ajustado para ${Math.round(scale)} por cento.`);
+      }
+    }
+
+    function changeFontSize(direction) {
+      const currentIdx = A11Y_FONT_STEPS.indexOf(currentFontScale);
+      const baseIdx = currentIdx === -1 ? A11Y_FONT_STEPS.indexOf(100) : currentIdx;
+      const nextIdx = Math.max(0, Math.min(A11Y_FONT_STEPS.length - 1, baseIdx + direction));
+      applyFontSize(A11Y_FONT_STEPS[nextIdx], true);
+    }
+
+    function resetFontSize() {
+      applyFontSize(100, true);
+    }
+
+    function applyHighContrast(enabled, announce = false) {
+      isHighContrast = Boolean(enabled);
+      if (isHighContrast && isDarkMode) {
+        applyDarkMode(false, false);
+      }
+      document.documentElement.classList.toggle('high-contrast', isHighContrast);
+      localStorage.setItem('autocar_high_contrast', String(isHighContrast));
+      const btn = document.getElementById('a11y-contrast-btn');
+      const status = document.getElementById('a11y-contrast-status');
+      if (btn) btn.setAttribute('aria-pressed', String(isHighContrast));
+      if (status) {
+        status.textContent = isHighContrast ? 'On' : 'Off';
+        status.className = isHighContrast
+          ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-slate-950'
+          : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600';
+      }
+      if (announce) {
+        announceToScreenReader(isHighContrast ? 'Modo de alto contraste ativado.' : 'Modo de alto contraste desativado.');
+      }
+    }
+
+    function toggleHighContrast() {
+      applyHighContrast(!isHighContrast, true);
+    }
+
+    function applyDarkMode(enabled, announce = false) {
+      isDarkMode = Boolean(enabled);
+      if (isDarkMode && isHighContrast) {
+        applyHighContrast(false, false);
+      }
+      document.documentElement.classList.toggle('dark-mode', isDarkMode);
+      localStorage.setItem('autocar_dark_mode', String(isDarkMode));
+      const btn = document.getElementById('dark-mode-btn');
+      const moon = document.getElementById('dark-mode-icon-moon');
+      const sun = document.getElementById('dark-mode-icon-sun');
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(isDarkMode));
+        btn.setAttribute('title', isDarkMode ? 'Desativar modo escuro' : 'Ativar modo escuro');
+        btn.setAttribute('aria-label', isDarkMode ? 'Desativar modo escuro' : 'Ativar modo escuro');
+      }
+      if (moon) moon.classList.toggle('hidden', isDarkMode);
+      if (sun) sun.classList.toggle('hidden', !isDarkMode);
+      if (announce) {
+        announceToScreenReader(isDarkMode ? 'Modo escuro ativado.' : 'Modo escuro desativado.');
+      }
+    }
+
+    function toggleDarkMode() {
+      applyDarkMode(!isDarkMode, true);
+    }
+
+    function applyVoiceReader(enabled, announce = false) {
+      isVoiceReaderActive = Boolean(enabled);
+      document.body.classList.toggle('a11y-voice-active', isVoiceReaderActive);
+      localStorage.setItem('autocar_voice_reader', String(isVoiceReaderActive));
+      const btn = document.getElementById('a11y-voice-btn');
+      const status = document.getElementById('a11y-voice-status');
+      if (btn) btn.setAttribute('aria-pressed', String(isVoiceReaderActive));
+      if (status) {
+        status.textContent = isVoiceReaderActive ? 'On' : 'Off';
+        status.className = isVoiceReaderActive
+          ? 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white'
+          : 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600';
+      }
+      if (!isVoiceReaderActive && 'speechSynthesis' in window) {
+        clearTimeout(speechTimeoutId);
+        window.speechSynthesis.cancel();
+      }
+      if (announce) {
+        if (isVoiceReaderActive) {
+          speakText('Leitura por voz ativada. Clique ou navegue pelos itens para ouvir.', true);
+        } else {
+          announceToScreenReader('Leitura por voz desativada.');
+        }
+      }
+    }
+
+    function toggleVoiceReader() {
+      applyVoiceReader(!isVoiceReaderActive, true);
+    }
+
+    // Inicializar preferências salvas de acessibilidade e eventos de leitura/atalhos
+    (function initAccessibility() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+      }
+      applyFontSize(currentFontScale, false);
+      applyHighContrast(isHighContrast, false);
+      applyDarkMode(isDarkMode, false);
+      applyVoiceReader(isVoiceReaderActive, false);
+
+      function getReadableElementText(el) {
+        if (!el) return '';
+        const target = el.closest('button, a, input, select, textarea, h1, h2, h3, h4, label, p, [aria-label]');
+        if (!target) return '';
+        if (target.matches('input, select, textarea')) {
+          const label = target.labels?.[0]?.innerText || target.getAttribute('aria-label') || target.getAttribute('placeholder') || '';
+          const val = target.value ? `, valor preenchido: ${target.value}` : '';
+          return `Campo ${label}${val}`;
+        }
+        return target.getAttribute('aria-label') || target.innerText || target.getAttribute('alt') || '';
+      }
+
+      // Usa focusin apenas quando a navegação vem do teclado (Tab), evitando conflito com click do mouse
+      let lastPointerDown = 0;
+      document.addEventListener('pointerdown', () => { lastPointerDown = Date.now(); });
+
+      document.addEventListener('focusin', (e) => {
+        if (!isVoiceReaderActive) return;
+        if (Date.now() - lastPointerDown < 400) return;
+        const text = getReadableElementText(e.target);
+        if (text) speakText(text);
+      });
+
+      document.addEventListener('click', (e) => {
+        const menu = document.getElementById('a11y-dropdown-menu');
+        const container = document.getElementById('a11y-menu-container');
+        if (menu && !menu.classList.contains('hidden') && container && !container.contains(e.target)) {
+          menu.classList.add('hidden');
+          document.getElementById('a11y-menu-btn')?.setAttribute('aria-expanded', 'false');
+        }
+        if (!isVoiceReaderActive) return;
+        if (e.target.closest('#a11y-voice-btn')) return;
+        const text = getReadableElementText(e.target);
+        if (text) speakText(text);
+      });
+
+      // Atalhos de teclado de acessibilidade (Alt+1 Estoque, Alt+2 Simulador, Alt+3 Contato)
+      document.addEventListener('keydown', (e) => {
+        if (e.altKey && !e.ctrlKey && !e.metaKey) {
+          if (e.key === '1') { e.preventDefault(); document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }); }
+          if (e.key === '2') { e.preventDefault(); document.getElementById('troca')?.scrollIntoView({ behavior: 'smooth' }); }
+          if (e.key === '3') { e.preventDefault(); document.getElementById('contato')?.scrollIntoView({ behavior: 'smooth' }); }
+        }
+      });
+    })();
+  </script>
+
+  <!-- Widget Oficial VLibras (Governo Federal) - Acessibilidade em Libras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
   </script>
 </body>
 </html>
