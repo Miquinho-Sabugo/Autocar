@@ -106,10 +106,25 @@
       left: 0.75rem;
       outline: 3px solid #facc15;
     }
+    html.high-contrast {
+      color-scheme: dark;
+    }
     html.high-contrast,
     html.high-contrast body {
       background-color: #000000 !important;
       color: #ffffff !important;
+    }
+    html.high-contrast ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    html.high-contrast ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+    html.high-contrast ::-webkit-scrollbar-thumb {
+      background: #facc15;
+      border-radius: 6px;
+      border: 2px solid #000000;
     }
     html.high-contrast header,
     html.high-contrast footer,
@@ -120,6 +135,7 @@
     html.high-contrast [class*="bg-white"],
     html.high-contrast [class*="bg-slate-50"],
     html.high-contrast [class*="bg-slate-100"],
+    html.high-contrast [class*="bg-slate-200"],
     html.high-contrast [class*="bg-blue-50"],
     html.high-contrast [class*="bg-emerald-50"],
     html.high-contrast [class*="bg-violet-50"],
@@ -128,6 +144,17 @@
       background-color: #0a0a0a !important;
       color: #ffffff !important;
       border-color: #facc15 !important;
+    }
+    html.high-contrast [class*="bg-blue-100"],
+    html.high-contrast [class*="bg-emerald-100"],
+    html.high-contrast [class*="bg-violet-100"],
+    html.high-contrast [class*="bg-amber-100"],
+    html.high-contrast [class*="bg-red-100"],
+    html.high-contrast [class*="bg-rose-100"],
+    html.high-contrast span[class*="bg-slate-100"] {
+      background-color: #000000 !important;
+      color: #facc15 !important;
+      border: 1.5px solid #facc15 !important;
     }
     html.high-contrast h1,
     html.high-contrast h2,
@@ -772,22 +799,22 @@
       </button>
     </div>
 
-    <section class="design-card mb-10 rounded-xl border border-slate-200 bg-[#eef4fa] p-4 sm:p-6" aria-labelledby="quick-search-title">
+    <section class="design-card mb-10 rounded-xl border border-slate-300 bg-[#eef4fa] p-4 sm:p-6" aria-labelledby="quick-search-title">
       <div class="mb-4 flex flex-wrap items-baseline justify-between gap-2">
         <h2 id="quick-search-title" class="text-sm font-bold text-[#102b4c]">Qual carro combina com você?</h2>
         <p class="text-[10px] text-slate-500">Veículos disponíveis esperando uma nova história</p>
       </div>
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1fr_1fr_auto]">
-        <label class="text-[10px] font-medium text-slate-500">Marca
-          <select id="quick-brand-filter" class="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-xs text-[#102b4c] focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="text-[10px] font-medium text-slate-600">Marca
+          <select id="quick-brand-filter" class="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-xs text-[#102b4c] focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Todas as marcas</option>
           </select>
         </label>
-        <label class="text-[10px] font-medium text-slate-500">Modelo
-          <input id="quick-model-filter" type="search" placeholder="Todos os modelos" class="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-xs text-[#102b4c] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="text-[10px] font-medium text-slate-600">Modelo
+          <input id="quick-model-filter" type="search" placeholder="Todos os modelos" class="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-xs text-[#102b4c] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </label>
-        <label class="text-[10px] font-medium text-slate-500">Faixa de preço
-          <select id="quick-price-filter" class="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-xs text-[#102b4c] focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="text-[10px] font-medium text-slate-600">Faixa de preço
+          <select id="quick-price-filter" class="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-xs text-[#102b4c] focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Qualquer preço</option>
             <option value="100000">Até R$ 100.000</option>
             <option value="150000">Até R$ 150.000</option>
@@ -795,8 +822,8 @@
             <option value="500000">Até R$ 500.000</option>
           </select>
         </label>
-        <label class="text-[10px] font-medium text-slate-500">Carroceria
-          <select id="quick-category-filter" class="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2.5 text-xs text-[#102b4c] focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label class="text-[10px] font-medium text-slate-600">Carroceria
+          <select id="quick-category-filter" class="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-xs text-[#102b4c] focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="Todos">Todos os tipos</option>
             <option value="SUV">SUV</option>
             <option value="Hatch">Hatch</option>
@@ -942,20 +969,20 @@
 
   </main>
 
-  <section id="por-que-autocar" class="bg-[#eef4fa] px-4 py-14 sm:px-6 lg:px-8 sm:py-16">
+  <section id="por-que-autocar" class="border-y border-slate-200 bg-[#eef4fa] px-4 py-14 sm:px-6 lg:px-8 sm:py-16">
     <div class="mx-auto max-w-7xl">
       <p class="design-eyebrow text-[10px] font-bold uppercase">↗ &nbsp;Confiança em cada quilômetro</p>
       <h2 class="mt-3 text-2xl sm:text-3xl font-semibold tracking-tight text-[#102b4c]">Comprar bem é seguir tranquilo.</h2>
-      <div class="mt-8 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
-        <article><span class="text-xl text-blue-600">♧</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Procedência de verdade</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Laudo cautelar aprovado e histórico verificado. Você conhece o carro antes de levar.</p></article>
-        <article><span class="text-xl text-blue-600">⚒</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Revisados para seguir</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Inspeção mecânica e preparação cuidadosa para você sair dirigindo com tranquilidade.</p></article>
-        <article><span class="text-xl text-blue-600">↻</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Troque seu carro com facilidade</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Avaliamos seu carro com transparência. Seu usado pode ser a entrada para o próximo.</p><button onclick="openTradeModal()" class="mt-3 text-[11px] font-bold text-blue-700">Simular troca →</button></article>
-        <article><span class="text-xl text-blue-600">♧</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Gente que acompanha</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Atendimento próximo, da primeira conversa à entrega das chaves. Sem pressão.</p></article>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs"><span class="text-xl text-blue-600">♧</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Procedência de verdade</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Laudo cautelar aprovado e histórico verificado. Você conhece o carro antes de levar.</p></article>
+        <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs"><span class="text-xl text-blue-600">⚒</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Revisados para seguir</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Inspeção mecânica e preparação cuidadosa para você sair dirigindo com tranquilidade.</p></article>
+        <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs"><span class="text-xl text-blue-600">↻</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Troque seu carro com facilidade</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Avaliamos seu carro com transparência. Seu usado pode ser a entrada para o próximo.</p><button onclick="openTradeModal()" class="mt-3 rounded-md px-2 py-1 text-[11px] font-bold text-blue-700 hover:bg-blue-50">Simular troca →</button></article>
+        <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-2xs"><span class="text-xl text-blue-600">♧</span><h3 class="mt-3 text-sm font-bold text-[#102b4c]">Gente que acompanha</h3><p class="mt-2 text-xs leading-relaxed text-slate-500">Atendimento próximo, da primeira conversa à entrega das chaves. Sem pressão.</p></article>
       </div>
     </div>
   </section>
 
-  <section id="troca" class="bg-[#102b4c] px-4 py-12 text-white sm:px-6 lg:px-8 sm:py-14">
+  <section id="troca" class="border-b border-slate-800 bg-[#102b4c] px-4 py-12 text-white sm:px-6 lg:px-8 sm:py-14">
     <div class="mx-auto grid max-w-7xl gap-8 md:grid-cols-[1.4fr_.8fr] md:items-center">
       <div>
         <p class="text-[10px] font-bold uppercase tracking-[.12em] text-blue-300">↗ &nbsp;Troca de veículos</p>
@@ -1036,7 +1063,7 @@
       <form id="trade-form" onsubmit="handleTradeSubmit(event)" class="p-6 space-y-4">
         <p class="text-xs text-slate-600">Preencha os dados do seu veículo atual para calcularmos a avaliação preliminar na troca.</p>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs items-end">
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Qual carro da loja você deseja?</label>
             <select id="trade-target-car" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-800 font-medium">
@@ -1044,7 +1071,7 @@
             </select>
           </div>
           <div>
-            <label class="block font-semibold text-slate-700 mb-1">Placa do seu carro atual (Mercosul ou antiga)</label>
+            <label class="block font-semibold text-slate-700 mb-1">Placa do seu carro atual</label>
             <input type="text" id="trade-plate" placeholder="Ex: ABC1D23" maxlength="8" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-mono uppercase" oninput="formatPlate(this)">
           </div>
           <div>
@@ -3723,16 +3750,16 @@
               </ul>
             </div>
 
-            <div class="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button onclick="openTradeForCar(${car.id}); closeCarDetailsModal();" class="h-11 px-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-2xs">
+            <div class="pt-2 flex flex-wrap items-center gap-2">
+              <button onclick="openTradeForCar(${car.id}); closeCarDetailsModal();" class="h-11 px-3.5 flex-auto rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-xs whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-2xs">
                 <svg class="w-4 h-4 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                 Dar na Troca
               </button>
-              <button onclick="openFinancingModal(${car.id}); closeCarDetailsModal();" class="h-11 px-2.5 rounded-xl border border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-800 font-bold text-xs whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-2xs">
+              <button onclick="openFinancingModal(${car.id}); closeCarDetailsModal();" class="h-11 px-3.5 flex-auto rounded-xl border border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-800 font-bold text-xs whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-2xs">
                 <svg class="w-4 h-4 flex-shrink-0 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M12 7h.01M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
                 Financiar
               </button>
-              <button onclick="toggleAddToCart(${car.id}); closeCarDetailsModal();" class="h-11 px-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-sm">
+              <button onclick="toggleAddToCart(${car.id}); closeCarDetailsModal();" class="h-11 px-4 flex-1 min-w-[115px] rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 shadow-sm">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                 Reservar
               </button>
