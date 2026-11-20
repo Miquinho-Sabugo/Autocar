@@ -31,442 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    }
-    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
-    button:not(:disabled) {
-      transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
-    }
-    button:not(:disabled):hover { transform: translateY(-1px); }
-    button:not(:disabled):active { transform: translateY(0) scale(.98); }
-    #hero-carousel-prev:not(:disabled),
-    #hero-carousel-next:not(:disabled) { transform: translateY(-50%); }
-    #hero-carousel-prev:not(:disabled):hover,
-    #hero-carousel-next:not(:disabled):hover { transform: translateY(-50%); }
-    #hero-carousel-prev:not(:disabled):active,
-    #hero-carousel-next:not(:disabled):active { transform: translateY(-50%) scale(.98); }
-    [class~="text-[9px]"],
-    [class~="text-[10px]"] { font-size: .8125rem !important; }
-    [class~="text-[11px]"],
-    [class~="text-xs"] { font-size: .875rem !important; }
-    [class~="text-[13px]"] { font-size: .9375rem !important; }
-    [class~="text-sm"] { font-size: 1rem !important; }
-    [class~="text-base"] { font-size: 1.0625rem !important; }
-    #wishlist-badge { width: 1.25rem; height: 1.25rem; }
-    /* Transições suaves para modais e gavetas */
-    .drawer-backdrop { transition: opacity 0.3s ease; }
-    .drawer-panel { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-    .car-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .car-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -6px rgba(0,0,0,0.12); }
-    /* Indicadores de validação de formulários */
-    .input-valid { border-color: #10b981 !important; background-color: #f0fdf4 !important; }
-    .input-invalid { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
-    /* Toast progress */
-    @keyframes toastTimer { from { width: 100%; } to { width: 0%; } }
-    .toast-progress { animation: toastTimer 4s linear forwards; }
-    :root {
-      --autocar-ink: #102b4c;
-      --autocar-blue: #2154e8;
-      --autocar-mist: #eef4fa;
-    }
-    body { color: var(--autocar-ink); background: #fff; }
-    #header-nav { box-shadow: none; }
-    .design-eyebrow { color: var(--autocar-blue); letter-spacing: .12em; }
-    .design-card { box-shadow: 0 10px 30px rgba(16, 43, 76, .06); }
-    .design-link { transition: color .18s ease; }
-    .design-link:hover { color: var(--autocar-blue); }
-    .car-card { border-radius: 14px; }
-    .car-card img { transition: transform .35s ease; }
-    .car-card:hover img { transform: scale(1.035); }
-    #legacy-hero { display: none; }
-    #legacy-category-pills { display: none; }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-    }
-    /* ==========================================
-       ACESSIBILIDADE: ALTO CONTRASTE E FOCO VISÍVEL
-       ========================================== */
-    .skip-to-content {
-      position: absolute;
-      left: -9999px;
-      top: 0.5rem;
-      z-index: 9999;
-      background: #1d4ed8;
-      color: #ffffff;
-      padding: 0.625rem 1rem;
-      border-radius: 0.5rem;
-      font-weight: 700;
-      font-size: 0.875rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-    }
-    .skip-to-content:focus {
-      left: 0.75rem;
-      outline: 3px solid #facc15;
-    }
-    html.high-contrast {
-      color-scheme: dark;
-    }
-    html.high-contrast,
-    html.high-contrast body {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-    }
-    html.high-contrast ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-    html.high-contrast ::-webkit-scrollbar-track {
-      background: #000000;
-    }
-    html.high-contrast ::-webkit-scrollbar-thumb {
-      background: #facc15;
-      border-radius: 6px;
-      border: 2px solid #000000;
-    }
-    html.high-contrast header,
-    html.high-contrast footer,
-    html.high-contrast section,
-    html.high-contrast article,
-    html.high-contrast nav,
-    html.high-contrast aside,
-    html.high-contrast [class*="bg-white"],
-    html.high-contrast [class*="bg-slate-50"],
-    html.high-contrast [class*="bg-slate-100"],
-    html.high-contrast [class*="bg-slate-200"],
-    html.high-contrast .bg-blue-50,
-    html.high-contrast .bg-emerald-50,
-    html.high-contrast .bg-violet-50,
-    html.high-contrast .bg-amber-50,
-    html.high-contrast [class*="bg-[#eef4fa]"] {
-      background-color: #0a0a0a !important;
-      color: #ffffff !important;
-      border-color: #facc15 !important;
-    }
-    html.high-contrast [class*="bg-blue-100"],
-    html.high-contrast [class*="bg-emerald-100"],
-    html.high-contrast [class*="bg-violet-100"],
-    html.high-contrast [class*="bg-amber-100"],
-    html.high-contrast [class*="bg-red-100"],
-    html.high-contrast [class*="bg-rose-100"],
-    html.high-contrast span[class*="bg-slate-100"] {
-      background-color: #000000 !important;
-      color: #facc15 !important;
-      border: 1.5px solid #facc15 !important;
-    }
-    html.high-contrast h1,
-    html.high-contrast h2,
-    html.high-contrast h3,
-    html.high-contrast h4,
-    html.high-contrast h5,
-    html.high-contrast strong,
-    html.high-contrast [class*="text-[#102b4c]"],
-    html.high-contrast [class*="text-slate-900"],
-    html.high-contrast [class*="text-slate-800"] {
-      color: #ffffff !important;
-    }
-    html.high-contrast p,
-    html.high-contrast span,
-    html.high-contrast label,
-    html.high-contrast li,
-    html.high-contrast [class*="text-slate-700"],
-    html.high-contrast [class*="text-slate-600"],
-    html.high-contrast [class*="text-slate-500"],
-    html.high-contrast [class*="text-slate-400"] {
-      color: #f3f4f6 !important;
-    }
-    html.high-contrast a,
-    html.high-contrast .design-eyebrow,
-    html.high-contrast [class*="text-blue-"],
-    html.high-contrast [class*="text-emerald-"],
-    html.high-contrast [class*="text-violet-"] {
-      color: #facc15 !important;
-    }
-    html.high-contrast input,
-    html.high-contrast select,
-    html.high-contrast textarea {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      border: 2px solid #ffffff !important;
-    }
-    html.high-contrast button {
-      border: 1.5px solid #facc15 !important;
-    }
-    html.high-contrast *:focus-visible {
-      outline: 3px solid #facc15 !important;
-      outline-offset: 2px !important;
-    }
-    body.a11y-voice-active [data-a11y-speaking="true"] {
-      outline: 3px dashed #2563eb !important;
-      outline-offset: 2px !important;
-    }
-    /* ==========================================
-       MODO ESCURO (DARK MODE)
-       ========================================== */
-    html.dark-mode {
-      color-scheme: dark;
-    }
-    html.dark-mode,
-    html.dark-mode body {
-      background-color: #0b1120 !important;
-      color: #e2e8f0 !important;
-    }
-    html.dark-mode ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-    html.dark-mode ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    html.dark-mode ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 6px;
-      border: 2px solid #0f172a;
-    }
-    html.dark-mode ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
-    html.dark-mode header#header-nav {
-      background-color: rgba(15, 23, 42, 0.92) !important;
-      border-bottom-color: #1e293b !important;
-    }
-    html.dark-mode footer {
-      background-color: #090d16 !important;
-      border-top-color: #1e293b !important;
-    }
-    html.dark-mode [class*="bg-white"] {
-      background-color: #111827 !important;
-      border-color: #273449 !important;
-    }
-    html.dark-mode [class*="bg-slate-50"] {
-      background-color: #162032 !important;
-      border-color: #2c3a52 !important;
-    }
-    html.dark-mode [class*="bg-slate-100"],
-    html.dark-mode [class*="bg-slate-200"] {
-      background-color: #1e293b !important;
-      border-color: #3b4c66 !important;
-      color: #e2e8f0 !important;
-    }
-    html.dark-mode span[class*="bg-slate-100"],
-    html.dark-mode button[class*="bg-slate-100"],
-    html.dark-mode button[class*="bg-slate-200"],
-    html.dark-mode button[class*="hover:bg-slate-100"] {
-      background-color: #1e293b !important;
-      border: 1px solid #475569 !important;
-      color: #e2e8f0 !important;
-    }
-    html.dark-mode button[class*="bg-slate-100"]:hover,
-    html.dark-mode button[class*="bg-slate-200"]:hover,
-    html.dark-mode button[class*="hover:bg-slate-100"]:hover {
-      background-color: #334155 !important;
-      border-color: #60a5fa !important;
-      color: #ffffff !important;
-    }
-    html.dark-mode .category-btn[class*="bg-[#102b4c]"] {
-      background-color: #2563eb !important;
-      border: 1px solid #60a5fa !important;
-      color: #ffffff !important;
-    }
-    html.dark-mode [class*="bg-[#eef4fa]"],
-    html.dark-mode .bg-blue-50,
-    html.dark-mode .bg-emerald-50,
-    html.dark-mode .bg-violet-50,
-    html.dark-mode .bg-amber-50 {
-      background-color: #172033 !important;
-      border-color: #2c3a52 !important;
-    }
-    html.dark-mode [class*="bg-blue-100"] {
-      background-color: #1e3a5f !important;
-      color: #93c5fd !important;
-      border: 1px solid #2563eb !important;
-    }
-    html.dark-mode [class*="bg-emerald-100"] {
-      background-color: #064e3b !important;
-      color: #6ee7b7 !important;
-      border: 1px solid #059669 !important;
-    }
-    html.dark-mode [class*="bg-amber-100"] {
-      background-color: #451a03 !important;
-      color: #fcd34d !important;
-      border: 1px solid #b45309 !important;
-    }
-    html.dark-mode [class*="bg-violet-100"] {
-      background-color: #2e1065 !important;
-      color: #c4b5fd !important;
-      border: 1px solid #7c3aed !important;
-    }
-    html.dark-mode [class*="bg-red-100"] {
-      background-color: #450a0a !important;
-      color: #fca5a5 !important;
-      border: 1px solid #dc2626 !important;
-    }
-    html.dark-mode h1,
-    html.dark-mode h2,
-    html.dark-mode h3,
-    html.dark-mode h4,
-    html.dark-mode h5,
-    html.dark-mode strong,
-    html.dark-mode [class*="text-[#102b4c]"],
-    html.dark-mode [class*="text-slate-900"],
-    html.dark-mode [class*="text-slate-800"] {
-      color: #f8fafc !important;
-    }
-    html.dark-mode [class*="text-slate-700"],
-    html.dark-mode [class*="text-slate-600"] {
-      color: #cbd5e1 !important;
-    }
-    html.dark-mode [class*="text-slate-500"],
-    html.dark-mode [class*="text-slate-400"] {
-      color: #94a3b8 !important;
-    }
-    html.dark-mode [class*="text-blue-700"],
-    html.dark-mode [class*="text-blue-800"],
-    html.dark-mode [class*="text-blue-900"] {
-      color: #60a5fa !important;
-    }
-    html.dark-mode .bg-blue-600,
-    html.dark-mode .bg-blue-700,
-    html.dark-mode .bg-emerald-600,
-    html.dark-mode .bg-violet-600 {
-      color: #ffffff !important;
-    }
-    html.dark-mode .bg-blue-600 *,
-    html.dark-mode .bg-blue-700 *,
-    html.dark-mode .bg-violet-600 * {
-      color: #ffffff !important;
-    }
-    html.dark-mode input,
-    html.dark-mode select,
-    html.dark-mode textarea {
-      background-color: #0f172a !important;
-      color: #f1f5f9 !important;
-      border-color: #334155 !important;
-    }
-    html.dark-mode input::placeholder,
-    html.dark-mode textarea::placeholder {
-      color: #64748b !important;
-    }
-    html.dark-mode .border-slate-200,
-    html.dark-mode .border-slate-100,
-    html.dark-mode .border-slate-300 {
-      border-color: #273449 !important;
-    }
-    html.dark-mode #a11y-menu-btn,
-    html.dark-mode #dark-mode-btn {
-      background-color: #1e293b !important;
-      border-color: #475569 !important;
-      color: #e2e8f0 !important;
-    }
-    html.dark-mode #a11y-menu-btn:hover,
-    html.dark-mode #dark-mode-btn:hover {
-      background-color: #334155 !important;
-      border-color: #60a5fa !important;
-      color: #ffffff !important;
-    }
-    html.dark-mode #a11y-dropdown-menu,
-    html.dark-mode #user-dropdown-menu {
-      background-color: #1e293b !important;
-      border-color: #334155 !important;
-    }
-    /* ==========================================
-       TOOLTIP INFORMATIVO (i) - HEURÍSTICAS 2, 10, 28 E 32
-       ========================================== */
-    .info-tip {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      vertical-align: middle;
-    }
-    .info-tip-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 1rem;
-      height: 1rem;
-      border-radius: 9999px;
-      background-color: #e2e8f0;
-      color: #334155;
-      font-size: 0.65rem;
-      font-weight: 800;
-      font-style: normal;
-      line-height: 1;
-      cursor: help;
-      border: 1px solid #cbd5e1;
-      transition: background-color .15s ease, color .15s ease;
-    }
-    .info-tip:hover .info-tip-btn,
-    .info-tip:focus-within .info-tip-btn,
-    .info-tip.is-open .info-tip-btn {
-      background-color: #2563eb;
-      color: #ffffff;
-      border-color: #2563eb;
-    }
-    .info-tip-box {
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      padding: 0.625rem 0.75rem;
-      border-radius: 0.625rem;
-      background-color: #0f172a;
-      color: #f8fafc;
-      font-size: 0.7rem;
-      font-weight: 500;
-      line-height: 1.45;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.28);
-      border: 1px solid #334155;
-      z-index: 60;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity .15s ease, visibility .15s ease;
-      text-align: left;
-      white-space: normal;
-      user-select: text;
-    }
-    .info-tip-box::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      height: 10px;
-    }
-    .info-tip-box.info-tip-left { left: 0; transform: none; }
-    .info-tip-box.info-tip-right { left: auto; right: 0; transform: none; }
-    .info-tip:hover .info-tip-box,
-    .info-tip:focus-within .info-tip-box,
-    .info-tip.is-open .info-tip-box {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-    html.dark-mode .info-tip-btn {
-      background-color: #334155 !important;
-      color: #e2e8f0 !important;
-      border-color: #475569 !important;
-    }
-    html.dark-mode .info-tip:hover .info-tip-btn,
-    html.dark-mode .info-tip:focus-within .info-tip-btn {
-      background-color: #2563eb !important;
-      color: #ffffff !important;
-      border-color: #60a5fa !important;
-    }
-    html.high-contrast .info-tip-btn {
-      background-color: #000000 !important;
-      color: #facc15 !important;
-      border: 1.5px solid #facc15 !important;
-    }
-    html.high-contrast .info-tip-box {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      border: 2px solid #facc15 !important;
-    }
-  </style>
+  <link rel="stylesheet" href="css/styles.css">
   <script>
     const navigationEntry = performance.getEntriesByType('navigation')[0];
     if (navigationEntry?.type === 'reload') {
@@ -944,6 +509,22 @@
       </div>
     </section>
 
+    <!-- Carros Vistos Recentemente (Itens 6 e 30 - Reconhecimento em vez de memorização) -->
+    <section id="recently-viewed-section" class="hidden mb-8 rounded-xl border border-slate-200 bg-white p-4 shadow-2xs" aria-labelledby="recently-viewed-title">
+      <div class="flex items-center justify-between gap-2 mb-3">
+        <h2 id="recently-viewed-title" class="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          Vistos recentemente
+        </h2>
+        <button type="button" onclick="clearRecentlyViewed()" class="text-[11px] font-semibold text-slate-500 hover:text-red-600 transition-colors">
+          Limpar histórico
+        </button>
+      </div>
+      <div id="recently-viewed-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Injetado via JS -->
+      </div>
+    </section>
+
     <div class="block">
       
       <!-- SIDEBAR DE FILTROS AVANÇADOS -->
@@ -1253,6 +834,48 @@
   </div>
 
   <!-- ==========================================
+       BARRA FLUTUANTE DE COMPARAÇÃO DE VEÍCULOS
+       ========================================== -->
+  <div id="compare-bar" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-4xl bg-white border border-slate-300 rounded-2xl shadow-2xl p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-wrap flex-1 min-w-0" id="compare-bar-items">
+      <!-- Chips injetados via JS -->
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <button type="button" onclick="clearCompareList()" class="h-9 px-3 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold whitespace-nowrap transition-colors">
+        Limpar
+      </button>
+      <button type="button" id="compare-open-btn" onclick="openCompareModal()" class="h-9 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+        Comparar agora
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DE COMPARAÇÃO LADO A LADO
+       ========================================== -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative" onclick="event.stopPropagation()">
+      <div class="p-5 bg-slate-50 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-50 border border-blue-200 text-blue-600 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path></svg>
+          </div>
+          <div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">Decisão Facilitada</span>
+            <h3 class="font-extrabold text-base text-slate-900 mt-0.5">Comparar Veículos Lado a Lado</h3>
+          </div>
+        </div>
+        <button onclick="closeCompareModal()" aria-label="Fechar comparação de veículos" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div id="compare-modal-body" class="p-5 overflow-x-auto">
+        <!-- Tabela comparativa injetada via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
        MODAL DE VENDER SEU CARRO (ANUNCIAR)
        ========================================== -->
   <div id="sell-car-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
@@ -1307,6 +930,48 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       BARRA FLUTUANTE DE COMPARAÇÃO DE VEÍCULOS
+       ========================================== -->
+  <div id="compare-bar" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-4xl bg-white border border-slate-300 rounded-2xl shadow-2xl p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-wrap flex-1 min-w-0" id="compare-bar-items">
+      <!-- Chips injetados via JS -->
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <button type="button" onclick="clearCompareList()" class="h-9 px-3 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold whitespace-nowrap transition-colors">
+        Limpar
+      </button>
+      <button type="button" id="compare-open-btn" onclick="openCompareModal()" class="h-9 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+        Comparar agora
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DE COMPARAÇÃO LADO A LADO
+       ========================================== -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative" onclick="event.stopPropagation()">
+      <div class="p-5 bg-slate-50 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-50 border border-blue-200 text-blue-600 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path></svg>
+          </div>
+          <div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">Decisão Facilitada</span>
+            <h3 class="font-extrabold text-base text-slate-900 mt-0.5">Comparar Veículos Lado a Lado</h3>
+          </div>
+        </div>
+        <button onclick="closeCompareModal()" aria-label="Fechar comparação de veículos" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div id="compare-modal-body" class="p-5 overflow-x-auto">
+        <!-- Tabela comparativa injetada via JS -->
+      </div>
     </div>
   </div>
 
@@ -1374,6 +1039,48 @@
           <button id="account-settings-submit" type="submit" class="h-10 rounded-lg bg-blue-600 px-5 font-bold text-white hover:bg-blue-700 whitespace-nowrap transition-colors">Salvar alterações</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       BARRA FLUTUANTE DE COMPARAÇÃO DE VEÍCULOS
+       ========================================== -->
+  <div id="compare-bar" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-4xl bg-white border border-slate-300 rounded-2xl shadow-2xl p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-wrap flex-1 min-w-0" id="compare-bar-items">
+      <!-- Chips injetados via JS -->
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <button type="button" onclick="clearCompareList()" class="h-9 px-3 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold whitespace-nowrap transition-colors">
+        Limpar
+      </button>
+      <button type="button" id="compare-open-btn" onclick="openCompareModal()" class="h-9 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+        Comparar agora
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DE COMPARAÇÃO LADO A LADO
+       ========================================== -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative" onclick="event.stopPropagation()">
+      <div class="p-5 bg-slate-50 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-50 border border-blue-200 text-blue-600 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path></svg>
+          </div>
+          <div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">Decisão Facilitada</span>
+            <h3 class="font-extrabold text-base text-slate-900 mt-0.5">Comparar Veículos Lado a Lado</h3>
+          </div>
+        </div>
+        <button onclick="closeCompareModal()" aria-label="Fechar comparação de veículos" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div id="compare-modal-body" class="p-5 overflow-x-auto">
+        <!-- Tabela comparativa injetada via JS -->
+      </div>
     </div>
   </div>
 
@@ -1457,6 +1164,48 @@
           Já possui conta? <button type="button" onclick="switchAuthTab('login')" class="text-blue-600 font-bold hover:underline">Faça login aqui</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       BARRA FLUTUANTE DE COMPARAÇÃO DE VEÍCULOS
+       ========================================== -->
+  <div id="compare-bar" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-4xl bg-white border border-slate-300 rounded-2xl shadow-2xl p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-wrap flex-1 min-w-0" id="compare-bar-items">
+      <!-- Chips injetados via JS -->
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <button type="button" onclick="clearCompareList()" class="h-9 px-3 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold whitespace-nowrap transition-colors">
+        Limpar
+      </button>
+      <button type="button" id="compare-open-btn" onclick="openCompareModal()" class="h-9 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+        Comparar agora
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DE COMPARAÇÃO LADO A LADO
+       ========================================== -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative" onclick="event.stopPropagation()">
+      <div class="p-5 bg-slate-50 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-50 border border-blue-200 text-blue-600 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path></svg>
+          </div>
+          <div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">Decisão Facilitada</span>
+            <h3 class="font-extrabold text-base text-slate-900 mt-0.5">Comparar Veículos Lado a Lado</h3>
+          </div>
+        </div>
+        <button onclick="closeCompareModal()" aria-label="Fechar comparação de veículos" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div id="compare-modal-body" class="p-5 overflow-x-auto">
+        <!-- Tabela comparativa injetada via JS -->
+      </div>
     </div>
   </div>
 
@@ -1837,7 +1586,14 @@
           <select id="financing-vehicle-id" onchange="updateFinancingVehiclePrice()" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium text-slate-800">
             <!-- Injetado via JS -->
           </select>
-          <p class="text-[11px] text-violet-600 font-semibold" id="financing-vehicle-price"></p>
+          <div id="financing-vehicle-preview" class="mt-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-2.5">
+            <img id="financing-vehicle-thumb" src="" alt="" class="w-16 h-12 rounded-lg object-cover bg-slate-200 flex-shrink-0">
+            <div class="min-w-0 flex-1">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-500">Simulando para</span>
+              <span id="financing-vehicle-name" class="block truncate text-xs font-bold text-slate-800"></span>
+            </div>
+            <span class="text-xs text-emerald-600 font-extrabold whitespace-nowrap" id="financing-vehicle-price"></span>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
@@ -1901,6 +1657,48 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       BARRA FLUTUANTE DE COMPARAÇÃO DE VEÍCULOS
+       ========================================== -->
+  <div id="compare-bar" class="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-4xl bg-white border border-slate-300 rounded-2xl shadow-2xl p-3 sm:px-4 flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2 flex-wrap flex-1 min-w-0" id="compare-bar-items">
+      <!-- Chips injetados via JS -->
+    </div>
+    <div class="flex items-center gap-2 ml-auto">
+      <button type="button" onclick="clearCompareList()" class="h-9 px-3 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold whitespace-nowrap transition-colors">
+        Limpar
+      </button>
+      <button type="button" id="compare-open-btn" onclick="openCompareModal()" class="h-9 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold whitespace-nowrap shadow-sm transition-colors">
+        Comparar agora
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL DE COMPARAÇÃO LADO A LADO
+       ========================================== -->
+  <div id="compare-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 relative" onclick="event.stopPropagation()">
+      <div class="p-5 bg-slate-50 border-b border-slate-100 rounded-t-2xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-blue-50 border border-blue-200 text-blue-600 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path></svg>
+          </div>
+          <div>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 uppercase tracking-wider">Decisão Facilitada</span>
+            <h3 class="font-extrabold text-base text-slate-900 mt-0.5">Comparar Veículos Lado a Lado</h3>
+          </div>
+        </div>
+        <button onclick="closeCompareModal()" aria-label="Fechar comparação de veículos" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-700 flex items-center justify-center transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <div id="compare-modal-body" class="p-5 overflow-x-auto">
+        <!-- Tabela comparativa injetada via JS -->
+      </div>
     </div>
   </div>
 
@@ -2303,6 +2101,7 @@
       scheduleHeroCarouselAdvance();
       checkBackendStatus();
       renderCatalog();
+      renderRecentlyViewed();
       updateCartUI();
       updateWishlistUI();
       populateTradeCarSelect();
@@ -2470,7 +2269,8 @@
         'sell-car-modal': closeSellCarModal,
         'checkout-modal': closeCheckoutModal,
         'confirm-modal': closeConfirmModal,
-        'financing-modal': closeFinancingModal
+        'financing-modal': closeFinancingModal,
+        'compare-modal': closeCompareModal
       };
 
       document.addEventListener('click', event => {
@@ -3043,6 +2843,7 @@
       grid.innerHTML = filtered.map(car => {
         const isFavorite = wishlist.includes(String(car.id));
         const inCart = cart.some(item => item.id === car.id);
+        const inCompare = compareList.includes(Number(car.id));
 
         // Cores de badges por categoria
         const categoryBadgeColors = {
@@ -3071,6 +2872,19 @@
                   ${car.badge}
                 </span>` : ''}
               </div>
+
+              <!-- Botão Comparar -->
+              <button 
+                onclick="event.stopPropagation(); toggleCompareCar(${car.id})" 
+                class="absolute top-3 right-12 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors ${inCompare ? 'bg-blue-600 text-white' : 'bg-white/95 hover:bg-white text-slate-700'}"
+                title="${inCompare ? 'Remover da comparação' : 'Comparar veículo lado a lado'}"
+                aria-label="${inCompare ? 'Remover ' + car.title + ' da comparação' : 'Adicionar ' + car.title + ' para comparar lado a lado'}"
+                aria-pressed="${inCompare ? 'true' : 'false'}"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M7 12h10M11 18h2"></path>
+                </svg>
+              </button>
 
               <!-- Botão Favoritar -->
               <button 
@@ -3865,6 +3679,7 @@
     function openCarDetails(carId) {
       const car = CARS_DATABASE.find(c => c.id === carId);
       if (!car) return;
+      addRecentlyViewed(car.id);
 
       const body = document.getElementById('car-details-body');
       body.innerHTML = `
@@ -4373,6 +4188,7 @@
       closeCheckoutModal();
       closeConfirmModal();
       closeFinancingModal();
+      closeCompareModal();
     }
 
     /* ==========================================
@@ -4428,10 +4244,24 @@
     function updateFinancingVehiclePrice() {
       const sel = document.getElementById('financing-vehicle-id');
       if (!sel) return;
+      const vehicleId = parseInt(sel.value);
+      const car = CARS_DATABASE.find(c => Number(c.id) === vehicleId);
       const opt = sel.options[sel.selectedIndex];
-      const price = parseFloat(opt?.dataset?.price || 0);
+      const price = car ? car.price : parseFloat(opt?.dataset?.price || 0);
+
       const priceEl = document.getElementById('financing-vehicle-price');
+      const nameEl = document.getElementById('financing-vehicle-name');
+      const thumbEl = document.getElementById('financing-vehicle-thumb');
+      const previewEl = document.getElementById('financing-vehicle-preview');
+
       if (priceEl) priceEl.textContent = formatMoney(price);
+      if (nameEl) nameEl.textContent = car ? `${car.title} (${car.year})` : '';
+      if (thumbEl && car) {
+        thumbEl.src = car.image;
+        thumbEl.alt = getCarAltText(car);
+      }
+      if (previewEl) previewEl.classList.toggle('hidden', !car);
+
       // Limpar resultado ao trocar veículo
       const result = document.getElementById('financing-result');
       if (result) result.classList.add('hidden');
@@ -4591,6 +4421,264 @@
         </div>
       `;
       announceToScreenReader(`Simulação concluída: ${prazo} parcelas de ${formatMoney(parcela)}, total a pagar ${formatMoney(totalPago)}.`);
+    }
+
+    /* ==========================================
+       18. CARROS VISTOS RECENTEMENTE (ITENS 6 E 30)
+       ========================================== */
+    const RECENTLY_VIEWED_KEY = 'autocar_recently_viewed';
+
+    function getRecentlyViewedIds() {
+      try {
+        const raw = localStorage.getItem(RECENTLY_VIEWED_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.map(Number).filter(Boolean) : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function addRecentlyViewed(carId) {
+      const id = Number(carId);
+      if (!id) return;
+      const next = [id, ...getRecentlyViewedIds().filter(item => item !== id)].slice(0, 4);
+      try {
+        localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(next));
+      } catch (_) {}
+      renderRecentlyViewed();
+    }
+
+    function clearRecentlyViewed() {
+      localStorage.removeItem(RECENTLY_VIEWED_KEY);
+      renderRecentlyViewed();
+    }
+
+    function renderRecentlyViewed() {
+      const section = document.getElementById('recently-viewed-section');
+      const list = document.getElementById('recently-viewed-list');
+      if (!section || !list) return;
+
+      const cars = getRecentlyViewedIds()
+        .map(id => CARS_DATABASE.find(c => Number(c.id) === id))
+        .filter(Boolean);
+
+      if (cars.length === 0) {
+        section.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+      }
+
+      section.classList.remove('hidden');
+      list.innerHTML = cars.map(car => `
+        <button
+          type="button"
+          onclick="openCarDetails(${car.id})"
+          class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 p-2.5 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
+          aria-label="Ver detalhes de ${car.title}, ${car.year}, ${formatMoney(car.price)}"
+        >
+          <img src="${car.image}" alt="${getCarAltText(car)}" class="w-16 h-12 rounded-lg object-cover bg-slate-200 flex-shrink-0" onerror="this.onerror=null;this.src=createCarPlaceholder('${car.title.replace(/'/g, "\\'")}', '${car.category}', '#1e293b', '#0f172a');">
+          <div class="min-w-0 flex-1">
+            <span class="block truncate text-xs font-bold text-slate-900">${car.title}</span>
+            <span class="block text-[10px] text-slate-500">${car.year} • ${car.km.toLocaleString('pt-BR')} km</span>
+            <span class="block text-xs font-extrabold text-emerald-600 mt-0.5">${formatMoney(car.price)}</span>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    /* ==========================================
+       17. COMPARAÇÃO DE VEÍCULOS LADO A LADO (ITENS 7, 21 E 31)
+       ========================================== */
+    let compareList = [];
+
+    function toggleCompareCar(carId) {
+      const id = Number(carId);
+      const car = CARS_DATABASE.find(c => Number(c.id) === id);
+      if (!car) return;
+
+      if (compareList.includes(id)) {
+        compareList = compareList.filter(item => item !== id);
+        showToast(`${car.title} removido da comparação.`, 'info');
+      } else {
+        if (compareList.length >= 3) {
+          showToast('Você pode comparar no máximo 3 veículos por vez.', 'info');
+          return;
+        }
+        compareList.push(id);
+        showToast(`${car.title} adicionado para comparação (${compareList.length}/3).`, 'success');
+      }
+      updateCompareBar();
+      renderCatalog();
+    }
+
+    function removeCompareCar(carId) {
+      compareList = compareList.filter(id => id !== Number(carId));
+      updateCompareBar();
+      renderCatalog();
+      const modal = document.getElementById('compare-modal');
+      if (modal && !modal.classList.contains('hidden')) {
+        if (compareList.length < 2) {
+          closeCompareModal();
+        } else {
+          renderCompareTable();
+        }
+      }
+    }
+
+    function clearCompareList() {
+      compareList = [];
+      updateCompareBar();
+      renderCatalog();
+      closeCompareModal();
+    }
+
+    function updateCompareBar() {
+      const bar = document.getElementById('compare-bar');
+      const itemsEl = document.getElementById('compare-bar-items');
+      const openBtn = document.getElementById('compare-open-btn');
+      if (!bar || !itemsEl || !openBtn) return;
+
+      if (compareList.length === 0) {
+        bar.classList.add('hidden');
+        return;
+      }
+
+      bar.classList.remove('hidden');
+      const cars = compareList.map(id => CARS_DATABASE.find(c => Number(c.id) === id)).filter(Boolean);
+      itemsEl.innerHTML = `
+        <span class="text-xs font-bold text-slate-700 mr-1">Comparar (${cars.length}/3):</span>
+        ${cars.map(c => `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold">
+            <span class="truncate max-w-[140px]">${c.title}</span>
+            <button type="button" onclick="removeCompareCar(${c.id})" aria-label="Remover ${c.title} da comparação" class="hover:text-red-600 font-bold">×</button>
+          </span>
+        `).join('')}
+      `;
+
+      if (cars.length < 2) {
+        openBtn.disabled = true;
+        openBtn.textContent = 'Escolha mais 1 carro';
+        openBtn.title = 'Selecione pelo menos 2 veículos para comparar lado a lado';
+        openBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        openBtn.disabled = false;
+        openBtn.textContent = `Comparar agora (${cars.length})`;
+        openBtn.removeAttribute('title');
+        openBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    function openCompareModal() {
+      if (compareList.length < 2) {
+        showToast('Selecione pelo menos 2 veículos para comparar.', 'info');
+        return;
+      }
+      renderCompareTable();
+      document.getElementById('compare-modal').classList.remove('hidden');
+      announceToScreenReader(`Comparação aberta com ${compareList.length} veículos.`);
+    }
+
+    function closeCompareModal() {
+      document.getElementById('compare-modal')?.classList.add('hidden');
+    }
+
+    function renderCompareTable() {
+      const body = document.getElementById('compare-modal-body');
+      if (!body) return;
+      const cars = compareList.map(id => CARS_DATABASE.find(c => Number(c.id) === id)).filter(Boolean);
+      if (cars.length < 2) return;
+
+      const minPrice = Math.min(...cars.map(c => c.price));
+      const minKm = Math.min(...cars.map(c => c.km));
+      const maxYear = Math.max(...cars.map(c => c.year));
+
+      body.innerHTML = `
+        <table class="w-full text-left text-xs border-collapse min-w-[540px]">
+          <thead>
+            <tr class="border-b border-slate-200">
+              <th class="py-3 pr-4 font-bold text-slate-500 uppercase tracking-wider w-36 align-top">Veículo</th>
+              ${cars.map(c => `
+                <th class="py-3 px-3 align-top">
+                  <div class="space-y-2">
+                    <div class="relative">
+                      <img src="${c.image}" alt="${getCarAltText(c)}" class="w-full h-28 object-cover rounded-xl bg-slate-100">
+                      <button type="button" onclick="removeCompareCar(${c.id})" aria-label="Remover ${c.title} da comparação" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/90 text-slate-700 hover:text-red-600 font-bold text-xs shadow">×</button>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">${c.category}</span>
+                    <div class="font-extrabold text-slate-900 text-sm leading-snug">${c.title}</div>
+                  </div>
+                </th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Preço à Vista</td>
+              ${cars.map(c => `
+                <td class="py-3 px-3">
+                  <span class="text-base font-black ${c.price === minPrice ? 'text-emerald-600' : 'text-slate-900'}">${formatMoney(c.price)}</span>
+                  ${c.price === minPrice ? '<span class="ml-1.5 inline-block px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">Menor preço</span>' : ''}
+                </td>
+              `).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Ano</td>
+              ${cars.map(c => `
+                <td class="py-3 px-3 font-semibold text-slate-800">
+                  ${c.year}
+                  ${c.year === maxYear ? '<span class="ml-1.5 inline-block px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">Mais novo</span>' : ''}
+                </td>
+              `).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Quilometragem</td>
+              ${cars.map(c => `
+                <td class="py-3 px-3 font-semibold text-slate-800">
+                  ${c.km.toLocaleString('pt-BR')} km
+                  ${c.km === minKm ? '<span class="ml-1.5 inline-block px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">Menor km</span>' : ''}
+                </td>
+              `).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Câmbio</td>
+              ${cars.map(c => `<td class="py-3 px-3 text-slate-700">${c.transmission}</td>`).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Combustível</td>
+              ${cars.map(c => `<td class="py-3 px-3 text-slate-700">${c.fuel}</td>`).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Cor</td>
+              ${cars.map(c => `<td class="py-3 px-3 text-slate-700">${c.color}</td>`).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600">Laudo Cautelar</td>
+              ${cars.map(() => `<td class="py-3 px-3"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">100% Aprovado</span></td>`).join('')}
+            </tr>
+            <tr>
+              <td class="py-3 pr-4 font-semibold text-slate-600 align-top">Equipamentos</td>
+              ${cars.map(c => `
+                <td class="py-3 px-3 align-top">
+                  <ul class="space-y-1 text-[11px] text-slate-600">
+                    ${(c.features || []).slice(0, 4).map(f => `<li>✓ ${f}</li>`).join('')}
+                  </ul>
+                </td>
+              `).join('')}
+            </tr>
+            <tr>
+              <td class="py-4 pr-4 font-semibold text-slate-600">Ações</td>
+              ${cars.map(c => `
+                <td class="py-4 px-3">
+                  <div class="flex flex-wrap gap-2">
+                    <button type="button" onclick="closeCompareModal(); openFinancingModal(${c.id});" class="h-9 px-3 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs whitespace-nowrap transition-colors">Financiar</button>
+                    <button type="button" onclick="closeCompareModal(); toggleAddToCart(${c.id});" class="h-9 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs whitespace-nowrap transition-colors">Reservar</button>
+                  </div>
+                </td>
+              `).join('')}
+            </tr>
+          </tbody>
+        </table>
+      `;
     }
 
     /* ==========================================
@@ -4819,7 +4907,7 @@
           const body = tipBox?.textContent?.trim() || '';
           if (body) return title ? `${title}. ${body}` : body;
         }
-        const target = el.closest('button, a, input, select, textarea, h1, h2, h3, h4, label, p, [aria-label]');
+        const target = el.closest('button, a, input, select, textarea, h1, h2, h3, h4, label, p, td, th, [aria-label]');
         if (!target) return '';
         if (target.matches('input, select, textarea')) {
           const siblingLabel = target.closest('div')?.querySelector('label');
