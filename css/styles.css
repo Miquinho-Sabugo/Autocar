@@ -67,6 +67,63 @@ button:not(:disabled):active { transform: translateY(0) scale(.98); }
 }
 
 /* ==========================================
+   ANIMAÇÕES DO TÍTULO E CARREGAMENTO DO CATÁLOGO
+   ========================================== */
+@keyframes heroWordIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  animation: heroWordIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--word-i, 0) * 90ms);
+}
+
+@keyframes carCardIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.car-card-enter {
+  opacity: 0;
+  animation: carCardIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--card-i, 0) * 45ms);
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.35s infinite linear;
+}
+html.dark-mode .skeleton-shimmer {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+}
+html.high-contrast .skeleton-shimmer {
+  background: linear-gradient(90deg, #111111 25%, #2a2a2a 50%, #111111 75%);
+  background-size: 200% 100%;
+  border: 1px solid #facc15;
+}
+
+/* ==========================================
    ACESSIBILIDADE: ALTO CONTRASTE E FOCO VISÍVEL
    ========================================== */
 .skip-to-content {

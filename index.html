@@ -124,7 +124,7 @@
             <div id="user-logged-out" class="flex items-center gap-1.5 sm:gap-2">
               <button 
                 onclick="openAuthModal('login')" 
-                class="inline-flex h-10 items-center justify-center rounded-xl px-2.5 sm:px-3 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 hover:text-blue-700"
+                class="inline-flex h-10 items-center justify-center rounded-xl border border-slate-300 bg-white px-3 sm:px-3.5 text-xs font-semibold text-slate-700 shadow-2xs transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
               >
                 Entrar
               </button>
@@ -341,7 +341,7 @@
       <div class="max-w-xl">
         <p class="design-eyebrow text-[10px] sm:text-xs font-bold uppercase mb-4">↗ &nbsp;Seu próximo carro está aqui</p>
         <h1 class="text-[2.6rem] sm:text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-tight text-[#102b4c]">
-          Novas histórias.<br>Um seminovo<br>para chamar<br class="hidden sm:block"> de seu.
+          <span class="hero-word" style="--word-i: 0">Novas</span> <span class="hero-word" style="--word-i: 1">histórias.</span><br><span class="hero-word" style="--word-i: 2">Um</span> <span class="hero-word" style="--word-i: 3">seminovo</span><br><span class="hero-word" style="--word-i: 4">para</span> <span class="hero-word" style="--word-i: 5">chamar</span><br class="hidden sm:block"> <span class="hero-word" style="--word-i: 6">de</span> <span class="hero-word" style="--word-i: 7">seu.</span>
         </h1>
         <p class="mt-5 max-w-md text-sm sm:text-base leading-relaxed text-slate-500">
           Carros bem escolhidos, procedência verificada e uma compra sem complicação. Encontre o seu na AutoCar.
@@ -664,7 +664,14 @@
 
         <!-- Grade com os Cards de Carro -->
         <div id="cars-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
-          <!-- Os cards de carros serão gerados dinamicamente pelo JavaScript com SVG Placeholder -->
+          <!-- Os cards de carros serão gerados dinamicamente pelo JavaScript -->
+        </div>
+
+        <!-- Controle / Sentinela de Carregamento Progressivo -->
+        <div id="catalog-load-more" class="hidden pt-4 flex flex-col items-center gap-2 text-center">
+          <button type="button" onclick="loadMoreCatalogCars()" class="h-10 px-5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold shadow-2xs transition-colors">
+            Carregar mais veículos (<span id="catalog-remaining-count">0</span> restantes)
+          </button>
         </div>
 
         <!-- Estado vazio quando não houver resultados na busca/filtro -->
@@ -2124,6 +2131,7 @@
       loadCartState();
       bindDismissibleOverlays();
       updateUserHeaderUI();
+      renderCatalogSkeleton();
       await loadUserFavorites(); // Carrega favoritos vinculados à conta
       await loadCarsFromServer(); // Tenta carregar do banco, usa fallback se offline
       populateQuickFilters();
@@ -2814,26 +2822,238 @@
     /* ==========================================================================
        4. RENDERIZAÇÃO DO CATÁLOGO DE CARROS
        ========================================================================== */
+    function renderCatalogSkeleton() {
+      const grid = document.getElementById('cars-grid');
+      if (!grid) return;
+      grid.setAttribute('aria-busy', 'true');
+      grid.innerHTML = Array.from({ length: 6 }, () => `
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden p-0 flex flex-col" aria-hidden="true">
+          <div class="w-full h-48 skeleton-shimmer"></div>
+          <div class="p-5 space-y-3">
+            <div class="h-3 w-28 rounded skeleton-shimmer"></div>
+            <div class="h-4 w-3/4 rounded skeleton-shimmer"></div>
+            <div class="flex gap-2">
+              <div class="h-5 w-16 rounded skeleton-shimmer"></div>
+              <div class="h-5 w-14 rounded skeleton-shimmer"></div>
+              <div class="h-5 w-24 rounded skeleton-shimmer"></div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 space-y-2">
+              <div class="h-6 w-32 rounded skeleton-shimmer"></div>
+              <div class="h-9 w-full rounded-lg skeleton-shimmer"></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const CATALOG_BATCH_SIZE = 6;
+    let catalogVisibleCount = CATALOG_BATCH_SIZE;
+    let catalogLastFiltered = [];
+    let catalogFilterSignature = '';
+    let catalogObserver = null;
+
+    function buildCarCardHTML(car, index) {
+      const isFavorite = wishlist.includes(String(car.id));
+      const inCart = cart.some(item => item.id === car.id);
+      const inCompare = compareList.includes(Number(car.id));
+
+      const categoryBadgeColors = {
+        'SUV': 'bg-blue-700 text-white',
+        'Sedan': 'bg-slate-800 text-white',
+        'Hatch': 'bg-indigo-700 text-white',
+        'Pickup': 'bg-amber-700 text-white',
+        'Esportivo': 'bg-purple-700 text-white',
+        'Elétrico': 'bg-emerald-700 text-white'
+      };
+      const catBadge = categoryBadgeColors[car.category] || 'bg-slate-900 text-white';
+
+      return `
+        <article style="--card-i: ${Math.min(index, 5)}" class="car-card car-card-enter bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:border-blue-300 transition-all flex flex-col justify-between group">
+          
+          <!-- Imagem Vetorial Placeholder com Badges -->
+          <div class="relative bg-slate-100 aspect-16/10 overflow-hidden cursor-pointer" onclick="openCarDetails(${car.id})">
+            <img src="${car.image}" alt="${getCarAltText(car)}" loading="lazy" onerror="this.onerror=null;this.src=createCarPlaceholder('${car.title.replace(/'/g, "\\'")}', '${car.category}', '#1e293b', '#0f172a');" class="w-full h-48 object-cover group-hover:scale-102 transition-transform duration-300">
+            
+            <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%]">
+              <span class="px-2.5 py-1 rounded-md text-[11px] font-bold ${catBadge} shadow-xs truncate">
+                ${car.category}
+              </span>
+              ${car.badge ? `
+              <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-500/90 text-white shadow-xs truncate max-w-[140px]" title="${car.badge}">
+                ${car.badge}
+              </span>` : ''}
+            </div>
+
+            <!-- Botão Comparar -->
+            <button 
+              data-compare-btn="${car.id}"
+              onclick="event.stopPropagation(); toggleCompareCar(${car.id})" 
+              class="absolute top-3 right-12 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors ${inCompare ? 'bg-blue-600 text-white' : 'bg-white/95 hover:bg-white text-slate-700'}"
+              title="${inCompare ? 'Remover da comparação' : 'Comparar veículo lado a lado'}"
+              aria-label="${inCompare ? 'Remover ' + car.title + ' da comparação' : 'Adicionar ' + car.title + ' para comparar lado a lado'}"
+              aria-pressed="${inCompare ? 'true' : 'false'}"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M7 12h10M11 18h2"></path>
+              </svg>
+            </button>
+
+            <!-- Botão Favoritar -->
+            <button 
+              onclick="event.stopPropagation(); toggleWishlist(${car.id})" 
+              class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-slate-700 flex items-center justify-center shadow-md transition-colors ${isFavorite ? 'text-rose-500' : ''}"
+              title="${isFavorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}"
+              aria-label="${isFavorite ? 'Remover ' + car.title + ' dos favoritos' : 'Salvar ' + car.title + ' nos favoritos'}"
+              aria-pressed="${isFavorite ? 'true' : 'false'}"
+            >
+              <svg class="w-4 h-4 ${isFavorite ? 'fill-current text-rose-500' : 'stroke-current'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dados do Veículo -->
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <!-- Avaliações e Ano -->
+              <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                <span class="font-semibold text-slate-700">${car.year} • ${car.km.toLocaleString('pt-BR')} km</span>
+                <div class="flex items-center gap-1 text-amber-500 font-bold">
+                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <span>${car.rating} (${car.reviewsCount})</span>
+                </div>
+              </div>
+
+              <!-- Título -->
+              <h3 class="font-bold text-[#102b4c] text-sm leading-snug line-clamp-2 min-h-10 hover:text-blue-600 transition-colors cursor-pointer" title="${car.title}" onclick="openCarDetails(${car.id})">
+                ${car.title}
+              </h3>
+
+              <!-- Tags Técnicas Rápidas -->
+              <div class="flex flex-wrap gap-1 mt-2.5">
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${car.transmission}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${car.fuel}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Laudo 100% OK</span>
+              </div>
+            </div>
+
+            <!-- Preço do Veículo e Botões de Ação -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <div>
+                <div>
+                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Preço à Vista</span>
+                  <span class="text-xl sm:text-2xl font-black text-emerald-600 block tracking-tight">
+                    ${formatMoney(car.price)}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Botões de Ação (Trocar, Financiar, Reservar) -->
+              <div class="grid grid-cols-3 gap-1.5 pt-1">
+                <button 
+                  onclick="openTradeForCar(${car.id})"
+                  class="py-2 px-1.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[11px] transition-colors flex items-center justify-center gap-1 shadow-2xs"
+                  title="Simular dar meu carro usado na troca deste"
+                >
+                  <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                  Trocar
+                </button>
+
+                <button 
+                  onclick="openFinancingModal(${car.id})"
+                  class="py-2 px-1.5 rounded-lg border border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-800 font-bold text-[11px] transition-colors flex items-center justify-center gap-1 shadow-2xs"
+                  title="Simular financiamento para este veículo"
+                >
+                  <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M12 7h.01M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
+                  Financiar
+                </button>
+
+                <button 
+                  onclick="toggleAddToCart(${car.id})"
+                  class="py-2 px-1.5 rounded-lg ${inCart ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'} text-white font-bold text-[11px] transition-colors flex items-center justify-center gap-1 shadow-xs"
+                  title="Reservar e adicionar à minha garagem"
+                >
+                  ${inCart ? `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    Reservado
+                  ` : `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    Reservar
+                  `}
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function updateCatalogLoadMoreUI() {
+      const container = document.getElementById('catalog-load-more');
+      const remEl = document.getElementById('catalog-remaining-count');
+      if (!container) return;
+      const remaining = Math.max(0, catalogLastFiltered.length - catalogVisibleCount);
+      if (remaining > 0) {
+        container.classList.remove('hidden');
+        if (remEl) remEl.textContent = remaining;
+        if ('IntersectionObserver' in window && !catalogObserver) {
+          catalogObserver = new IntersectionObserver((entries) => {
+            if (entries.some(entry => entry.isIntersecting)) {
+              loadMoreCatalogCars();
+            }
+          }, { rootMargin: '140px' });
+          catalogObserver.observe(container);
+        }
+      } else {
+        container.classList.add('hidden');
+      }
+    }
+
+    function loadMoreCatalogCars() {
+      const grid = document.getElementById('cars-grid');
+      if (!grid || catalogVisibleCount >= catalogLastFiltered.length) return;
+      const prevCount = catalogVisibleCount;
+      catalogVisibleCount = Math.min(catalogLastFiltered.length, catalogVisibleCount + CATALOG_BATCH_SIZE);
+      const nextBatch = catalogLastFiltered.slice(prevCount, catalogVisibleCount);
+      if (nextBatch.length) {
+        grid.insertAdjacentHTML('beforeend', nextBatch.map((car, idx) => buildCarCardHTML(car, idx)).join(''));
+      }
+      updateCatalogLoadMoreUI();
+    }
+
     function renderCatalog() {
       const grid = document.getElementById('cars-grid');
+      if (grid) grid.removeAttribute('aria-busy');
       const emptyState = document.getElementById('empty-state');
       const countLabel = document.getElementById('cars-count-label');
       if (!grid) return;
 
+      const nextSignature = [
+        isShowingWishlistOnly,
+        activeCategory,
+        activeBrand,
+        activeModel,
+        activeMaxPrice,
+        activeTransmission,
+        activeFuel,
+        searchQuery,
+        sortMethod
+      ].join('|');
+
+      if (nextSignature !== catalogFilterSignature) {
+        catalogFilterSignature = nextSignature;
+        catalogVisibleCount = CATALOG_BATCH_SIZE;
+      }
+
       // Filtragem
       let filtered = CARS_DATABASE.filter(car => {
-        // Filtro exclusivo de Favoritos
         if (isShowingWishlistOnly && !wishlist.includes(String(car.id))) return false;
-        // Categoria
         if (activeCategory !== 'Todos' && car.category !== activeCategory) return false;
         if (activeBrand && car.title.split(' ')[0].toLowerCase() !== activeBrand.toLowerCase()) return false;
         if (activeModel && !car.title.toLowerCase().includes(activeModel.toLowerCase())) return false;
         if (Number(car.price) > activeMaxPrice) return false;
-        // Transmissão
         if (activeTransmission !== 'Todas' && car.transmission !== activeTransmission) return false;
-        // Combustível
         if (activeFuel !== 'Todos' && car.fuel !== activeFuel) return false;
-        // Busca textual
         if (searchQuery.trim() !== '') {
           const q = searchQuery.toLowerCase();
           const matchesTitle = car.title.toLowerCase().includes(q);
@@ -2851,6 +3071,7 @@
       else if (sortMethod === 'rating-desc') filtered.sort((a, b) => b.rating - a.rating);
       else if (sortMethod === 'name-asc') filtered.sort((a, b) => a.title.localeCompare(b.title));
 
+      catalogLastFiltered = filtered;
       countLabel.textContent = filtered.length;
       const todosBtn = document.getElementById('cat-btn-todos');
       if (todosBtn) {
@@ -2860,6 +3081,7 @@
       if (filtered.length === 0) {
         grid.innerHTML = '';
         emptyState.classList.remove('hidden');
+        document.getElementById('catalog-load-more')?.classList.add('hidden');
         const emptyTitle = document.getElementById('empty-state-title');
         const emptyMessage = document.getElementById('empty-state-message');
         if (emptyTitle) emptyTitle.textContent = isShowingWishlistOnly ? 'Nenhum veículo nos seus favoritos' : 'Nenhum carro encontrado com esses filtros';
@@ -2870,144 +3092,9 @@
       }
       emptyState.classList.add('hidden');
 
-      grid.innerHTML = filtered.map(car => {
-        const isFavorite = wishlist.includes(String(car.id));
-        const inCart = cart.some(item => item.id === car.id);
-        const inCompare = compareList.includes(Number(car.id));
-
-        // Cores de badges por categoria
-        const categoryBadgeColors = {
-          'SUV': 'bg-blue-700 text-white',
-          'Sedan': 'bg-slate-800 text-white',
-          'Hatch': 'bg-indigo-700 text-white',
-          'Pickup': 'bg-amber-700 text-white',
-          'Esportivo': 'bg-purple-700 text-white',
-          'Elétrico': 'bg-emerald-700 text-white'
-        };
-        const catBadge = categoryBadgeColors[car.category] || 'bg-slate-900 text-white';
-
-        return `
-          <article class="car-card bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:border-blue-300 transition-all flex flex-col justify-between group">
-            
-            <!-- Imagem Vetorial Placeholder com Badges -->
-            <div class="relative bg-slate-100 aspect-16/10 overflow-hidden cursor-pointer" onclick="openCarDetails(${car.id})">
-              <img src="${car.image}" alt="${getCarAltText(car)}" loading="lazy" onerror="this.onerror=null;this.src=createCarPlaceholder('${car.title.replace(/'/g, "\\'")}', '${car.category}', '#1e293b', '#0f172a');" class="w-full h-48 object-cover group-hover:scale-102 transition-transform duration-300">
-              
-              <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%]">
-                <span class="px-2.5 py-1 rounded-md text-[11px] font-bold ${catBadge} shadow-xs truncate">
-                  ${car.category}
-                </span>
-                ${car.badge ? `
-                <span class="px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-500/90 text-white shadow-xs truncate max-w-[140px]" title="${car.badge}">
-                  ${car.badge}
-                </span>` : ''}
-              </div>
-
-              <!-- Botão Comparar -->
-              <button 
-                onclick="event.stopPropagation(); toggleCompareCar(${car.id})" 
-                class="absolute top-3 right-12 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors ${inCompare ? 'bg-blue-600 text-white' : 'bg-white/95 hover:bg-white text-slate-700'}"
-                title="${inCompare ? 'Remover da comparação' : 'Comparar veículo lado a lado'}"
-                aria-label="${inCompare ? 'Remover ' + car.title + ' da comparação' : 'Adicionar ' + car.title + ' para comparar lado a lado'}"
-                aria-pressed="${inCompare ? 'true' : 'false'}"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M7 12h10M11 18h2"></path>
-                </svg>
-              </button>
-
-              <!-- Botão Favoritar -->
-              <button 
-                onclick="event.stopPropagation(); toggleWishlist(${car.id})" 
-                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-slate-700 flex items-center justify-center shadow-md transition-colors ${isFavorite ? 'text-rose-500' : ''}"
-                title="${isFavorite ? 'Remover dos favoritos' : 'Salvar nos favoritos'}"
-                aria-label="${isFavorite ? 'Remover ' + car.title + ' dos favoritos' : 'Salvar ' + car.title + ' nos favoritos'}"
-                aria-pressed="${isFavorite ? 'true' : 'false'}"
-              >
-                <svg class="w-4 h-4 ${isFavorite ? 'fill-current text-rose-500' : 'stroke-current'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                </svg>
-              </button>
-            </div>
-
-            <!-- Dados do Veículo -->
-            <div class="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                <!-- Avaliações e Ano -->
-                <div class="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-                  <span class="font-semibold text-slate-700">${car.year} • ${car.km.toLocaleString('pt-BR')} km</span>
-                  <div class="flex items-center gap-1 text-amber-500 font-bold">
-                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                    <span>${car.rating} (${car.reviewsCount})</span>
-                  </div>
-                </div>
-
-                <!-- Título -->
-                <h3 class="font-bold text-[#102b4c] text-sm leading-snug line-clamp-2 min-h-10 hover:text-blue-600 transition-colors cursor-pointer" title="${car.title}" onclick="openCarDetails(${car.id})">
-                  ${car.title}
-                </h3>
-
-                <!-- Tags Técnicas Rápidas -->
-                <div class="flex flex-wrap gap-1 mt-2.5">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${car.transmission}</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${car.fuel}</span>
-                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Laudo 100% OK</span>
-                </div>
-              </div>
-
-              <!-- Preço do Veículo e Botões de Ação -->
-              <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-                <div>
-                  <div>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Preço à Vista</span>
-                    <span class="text-xl sm:text-2xl font-black text-emerald-600 block tracking-tight">
-                      ${formatMoney(car.price)}
-                    </span>
-                  </div>
-                </div>
-
-                <!-- Botões de Ação (Trocar, Financiar, Reservar) -->
-                <div class="grid grid-cols-3 gap-1.5 pt-1">
-                  <button 
-                    onclick="openTradeForCar(${car.id})"
-                    class="py-2 px-1.5 rounded-lg border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold text-[11px] transition-colors flex items-center justify-center gap-1 shadow-2xs"
-                    title="Simular dar meu carro usado na troca deste"
-                  >
-                    <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                    Trocar
-                  </button>
-
-                  <button 
-                    onclick="openFinancingModal(${car.id})"
-                    class="py-2 px-1.5 rounded-lg border border-violet-200 bg-violet-50 hover:bg-violet-100 text-violet-800 font-bold text-[11px] transition-colors flex items-center justify-center gap-1 shadow-2xs"
-                    title="Simular financiamento para este veículo"
-                  >
-                    <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M12 7h.01M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg>
-                    Financiar
-                  </button>
-
-                  <button 
-                    onclick="toggleAddToCart(${car.id})"
-                    class="py-2 px-1.5 rounded-lg ${inCart ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-blue-600 hover:bg-blue-700'} text-white font-bold text-[11px] transition-colors flex items-center justify-center gap-1 shadow-xs"
-                    title="Reservar e adicionar à minha garagem"
-                  >
-                    ${inCart ? `
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                      Reservado
-                    ` : `
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                      Reservar
-                    `}
-                  </button>
-                </div>
-
-              </div>
-
-            </div>
-
-          </article>
-        `;
-      }).join('');
+      const visibleCars = filtered.slice(0, catalogVisibleCount);
+      grid.innerHTML = visibleCars.map((car, index) => buildCarCardHTML(car, index)).join('');
+      updateCatalogLoadMoreUI();
 
       renderActiveFilterChips();
     }
@@ -4521,6 +4608,20 @@
        ========================================== */
     let compareList = [];
 
+    function syncCompareButtonsUI() {
+      document.querySelectorAll('[data-compare-btn]').forEach(btn => {
+        const id = Number(btn.getAttribute('data-compare-btn'));
+        const car = CARS_DATABASE.find(c => Number(c.id) === id);
+        const active = compareList.includes(id);
+        btn.className = `absolute top-3 right-12 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors ${active ? 'bg-blue-600 text-white' : 'bg-white/95 hover:bg-white text-slate-700'}`;
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        btn.setAttribute('title', active ? 'Remover da comparação' : 'Comparar veículo lado a lado');
+        if (car) {
+          btn.setAttribute('aria-label', active ? `Remover ${car.title} da comparação` : `Adicionar ${car.title} para comparar lado a lado`);
+        }
+      });
+    }
+
     function toggleCompareCar(carId) {
       const id = Number(carId);
       const car = CARS_DATABASE.find(c => Number(c.id) === id);
@@ -4538,13 +4639,13 @@
         showToast(`${car.title} adicionado para comparação (${compareList.length}/3).`, 'success');
       }
       updateCompareBar();
-      renderCatalog();
+      syncCompareButtonsUI();
     }
 
     function removeCompareCar(carId) {
       compareList = compareList.filter(id => id !== Number(carId));
       updateCompareBar();
-      renderCatalog();
+      syncCompareButtonsUI();
       const modal = document.getElementById('compare-modal');
       if (modal && !modal.classList.contains('hidden')) {
         if (compareList.length < 2) {
@@ -4558,7 +4659,7 @@
     function clearCompareList() {
       compareList = [];
       updateCompareBar();
-      renderCatalog();
+      syncCompareButtonsUI();
       closeCompareModal();
     }
 
