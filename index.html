@@ -1277,11 +1277,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Telefone WhatsApp</label>
-              <input type="tel" id="sell-phone" placeholder="(11) 98765-4321" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg">
+              <input type="tel" id="sell-phone" inputmode="numeric" maxlength="15" placeholder="(11) 98765-4321" onkeydown="handlePhoneKeydown(event, this)" oninput="formatPhone(this)" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg">
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Placa do Carro</label>
-              <input type="text" id="sell-plate" placeholder="ABC-1234 ou ABC1D23" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg uppercase font-mono">
+              <input type="text" id="sell-plate" maxlength="8" placeholder="ABC1D23" oninput="formatPlate(this)" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg uppercase font-mono">
             </div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1636,7 +1636,7 @@
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">WhatsApp / Telefone</label>
-              <input type="tel" id="cust-phone" placeholder="(11) 98765-4321" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg">
+              <input type="tel" id="cust-phone" inputmode="numeric" maxlength="15" placeholder="(11) 98765-4321" onkeydown="handlePhoneKeydown(event, this)" oninput="formatPhone(this)" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg">
             </div>
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Local de Retirada</label>
@@ -1849,7 +1849,7 @@
                 <span role="tooltip" class="info-tip-box info-tip-left">Valor pago à vista no ato da compra. Quanto maior a entrada, menor o valor financiado e menores as parcelas.</span>
               </span>
             </label>
-            <input type="number" id="financing-entrada" placeholder="Ex: 30000" min="0" step="1000" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg">
+            <input type="number" id="financing-entrada" oninput="validateFinancingInputs()" placeholder="Ex: 30000" min="0" step="1000" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg">
           </div>
           <div>
             <label class="flex items-center gap-1.5 font-semibold text-slate-700 mb-1">
@@ -1876,9 +1876,11 @@
                 <span role="tooltip" class="info-tip-box info-tip-right">Juros cobrados por mês sobre o valor financiado. A taxa de 1,49% a.m. é apenas uma média estimada e pode variar na análise de crédito.</span>
               </span>
             </label>
-            <input type="number" id="financing-taxa" value="1.49" step="0.01" min="0.01" max="10" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-mono">
+            <input type="number" id="financing-taxa" oninput="validateFinancingInputs()" value="1.49" step="0.01" min="0.01" max="10" required class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-mono">
           </div>
         </div>
+
+        <p id="financing-inline-error" role="alert" class="hidden text-[11px] font-semibold text-red-600 flex items-center gap-1.5"></p>
 
         <!-- Resultado -->
         <div id="financing-result" class="hidden mt-2 p-4 rounded-xl bg-violet-50 border border-violet-200 text-slate-800 text-xs">
@@ -4390,6 +4392,7 @@
       const result = document.getElementById('financing-result');
       if (result) result.classList.add('hidden');
       updateFinancingVehiclePrice();
+      validateFinancingInputs();
     }
     function openFinancingModal(carId) {
       const modal = document.getElementById('financing-modal');
@@ -4405,6 +4408,7 @@
         if (sel) sel.value = carId;
         updateFinancingVehiclePrice();
       }
+      validateFinancingInputs();
     }
 
     function closeFinancingModal() {
@@ -4431,6 +4435,57 @@
       // Limpar resultado ao trocar veículo
       const result = document.getElementById('financing-result');
       if (result) result.classList.add('hidden');
+      validateFinancingInputs();
+    }
+
+    function validateFinancingInputs() {
+      const sel = document.getElementById('financing-vehicle-id');
+      const opt = sel?.options?.[sel.selectedIndex];
+      const preco = parseFloat(opt?.dataset?.price || 0);
+      const entradaEl = document.getElementById('financing-entrada');
+      const taxaEl = document.getElementById('financing-taxa');
+      const errorEl = document.getElementById('financing-inline-error');
+      const btn = document.getElementById('financing-calc-btn');
+      if (!entradaEl || !taxaEl || !errorEl || !btn) return true;
+
+      const rawEntrada = entradaEl.value.trim();
+      const entrada = rawEntrada === '' ? 0 : parseFloat(rawEntrada);
+      const taxa = parseFloat(taxaEl.value);
+
+      entradaEl.classList.remove('input-invalid', 'input-valid');
+      taxaEl.classList.remove('input-invalid', 'input-valid');
+
+      let errorMsg = '';
+      if (Number.isNaN(entrada) || entrada < 0) {
+        errorMsg = 'O valor de entrada não pode ser negativo.';
+        entradaEl.classList.add('input-invalid');
+      } else if (preco > 0 && entrada >= preco) {
+        errorMsg = `A entrada (${formatMoney(entrada)}) deve ser menor que o valor do veículo (${formatMoney(preco)}).`;
+        entradaEl.classList.add('input-invalid');
+      } else if (rawEntrada !== '' && entrada > 0) {
+        entradaEl.classList.add('input-valid');
+      }
+
+      if (!errorMsg && (Number.isNaN(taxa) || taxa <= 0 || taxa > 10)) {
+        errorMsg = 'Informe uma taxa mensal entre 0,01% e 10%.';
+        taxaEl.classList.add('input-invalid');
+      }
+
+      if (errorMsg) {
+        errorEl.innerHTML = `<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>${errorMsg}</span>`;
+        errorEl.classList.remove('hidden');
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        btn.title = errorMsg;
+        return false;
+      }
+
+      errorEl.classList.add('hidden');
+      errorEl.textContent = '';
+      btn.disabled = false;
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      btn.removeAttribute('title');
+      return true;
     }
 
     async function handleFinancingSubmit(e) {
@@ -4486,7 +4541,10 @@
         totalJuros = totalPago - preco;
       }
 
-      if (btn) { btn.disabled = false; btn.textContent = 'Calcular Financiamento'; }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M12 7h.01M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"></path></svg> Calcular Financiamento`;
+      }
 
       // Renderizar resultado
       const resultBox = document.getElementById('financing-result');
